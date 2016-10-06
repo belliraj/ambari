@@ -49,7 +49,7 @@ export default function() {
 
   var peersInfo = {
     'c1' : [
-      'c2' : {id:'c2', name :'Cluster2', datacenter :'DC2'}
+      {id:'c2', name :'Cluster2', datacenter :'DC2'}
     ],
     'c2' : []
   };

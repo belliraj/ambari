@@ -19,5 +19,5 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   rendered : function(){
 
-  }.on('didInsertElement');
+  }.on('didInsertElement')
 });

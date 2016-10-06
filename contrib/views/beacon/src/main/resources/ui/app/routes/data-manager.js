@@ -20,7 +20,7 @@ export default Ember.Route.extend({
   redirect(model) {
     if (model.peers.length > 0 && model.policies.length > 0) {
       this.transitionTo('data-manager.monitor');
-    } else if(model.peers.length > 0 && model.policies.length == 0){
+    } else if(model.peers.length > 0 && model.policies.length === 0){
       this.transitionTo('data-manager.replication-setup');
     } else {
       this.transitionTo('data-manager.setup');
