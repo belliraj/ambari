@@ -1,0 +1,80 @@
+{{!
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+}}
+<div id="cluster-initial-dialog" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Data Manager - Intial Setup</h4>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-target="#sourceCluster" data-toggle="tab" {{action 'onTabSelect' 'source'}}>1. Source Cluster</a></li>
+          <li><a data-target="#destinationClusters" data-toggle="tab" {{action 'onTabSelect' 'destination'}}>2. Destination Clusters</a></li>
+        </ul>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="sourceCluster">
+            Enter & verify the following source cluster details
+            <hr />
+            <div class="row">
+              <div class="col-xs-6">
+                <label class="control-label smaller-font">CLUSTER NAME</label>
+                <span class="form-control smaller-font">{{currentCluster.name}}</span>
+              </div>
+              <div class="col-xs-6">
+                <label class="control-label smaller-font">DATA CENTER</label>
+                <span class="form-control smaller-font">{{currentCluster.datacenter}}</span>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="destinationClusters">
+            Select or enter datacenter for the following remote clusters registered through Ambari
+            <hr />
+            <div class="row">
+              <div class="col-xs-6">
+                <label class="control-label smaller-font">CLUSTER NAME</label>
+                <select class="form-control" onchange={{action 'remoteClusterSelected' value="target.value"}}>
+                  <option value="">Select</option>
+                  {{#each remoteClusters as |cluster|}}
+                    <option value="{{cluster.id}}">{{cluster.name}}</option>
+                  {{/each}}
+                </select>
+              </div>
+              <div class="col-xs-6">
+                <label class="control-label smaller-font">DATA CENTER</label>
+                <span class="form-control smaller-font">{{selectedCluster.datacenter}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        {{#if (eq selectedTab 'source')}}
+          <a class="pull-left" disabled=disabled>Prev</a>
+          <a class="btn btn-success" role="button">NEXT</a>
+        {{else}}
+          <a class="pull-left">Prev</a>
+          <a class="btn btn-success" role="button" {{action 'save'}}>SAVE</a>
+        {{/if}}
+
+        <!--<a class="btn btn-success" role="button">SAVE</a>-->
+      </div>
+    </div>
+  </div>
+</div>
+  {{yield}}

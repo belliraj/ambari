@@ -1,0 +1,9 @@
+{
+  "name": "data-manager",
+  "dependencies": {
+    "ember": "~2.8.0",
+    "ember-cli-shims": "0.1.1",
+	"bootstrap": "~3.3.6",
+    "font-awesome": "fontawesome#^4.5.0"
+  }
+}
