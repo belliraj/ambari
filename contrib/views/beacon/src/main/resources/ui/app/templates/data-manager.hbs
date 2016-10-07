@@ -21,9 +21,17 @@
       <a class="navbar-brand" href="#">Data Manager</a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="">MONITOR JOBS</a></li>
-      <li>{{#link-to "data-manager.replication-policies"}}REPLICAITON POLICIES{{/link-to}}</li>
-      <li><a href="">INCOMING POLICIES</a></li>
+      <li>
+        <a href="" class="smaller-font"><i class="fa fa-tasks pr5 navbar-icons"></i>MONITOR JOBS</a>
+      </li>
+      <li>
+        {{#link-to "data-manager.replication-policies" class="smaller-font"}}
+          <i class="fa fa-files-o pr5 navbar-icons"></i>REPLICAITON POLICIES
+        {{/link-to}}
+      </li>
+      <li>
+        <a href="" class="smaller-font"><i class="fa fa-object-ungroup pr5 navbar-icons"></i>INCOMING POLICIES</a>
+      </li>
     </ul>
   </div>
   <div id="page-wrapper">
