@@ -43,8 +43,6 @@ body {
 }
 
 .navbar-fixed-left {
-  width: 250px;
-  position: fixed;
   border-radius: 0;
   height: 100%;
   background-color: white;
@@ -82,10 +80,62 @@ body {
 .nav-tabs>li>a {
 	border-radius: 0;
 	text-decoration: none;
+  display: inline-block;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
 	color: #5bb75b;
 	border: 1px solid transparent;
 	border-bottom: 3px solid #5bb75b;
+  background-color: transparent;
+}
+
+.replication-policy-content {
+	padding: 20px;
+}
+
+//.replication-policy-content .nav>li {
+//	width: 50%;
+//}
+
+.replication-policy-content .panel {
+	border-radius: 0;
+}
+
+.replication-policy-content .panel-default {
+	border-color: #ccc;
+}
+
+.replication-policy-content .create-replication-policy-tab .panel-body {
+	padding-top: 0;
+	padding-bottom: 0px;
+}
+
+.replication-policy-content .row {
+	border-bottom: 1px solid #ccc;
+}
+
+.replication-policy-content .row:last-child {
+	border-bottom: 0;
+}
+
+.replication-policy-content .row >div {
+	border-right: 1px solid #ccc;
+	padding: 10px 25px;
+}
+
+.replication-policy-content .row div:last-child {
+	border-right: 0;
+}
+
+.width-forty-percent {
+	width : 40%;
+}
+
+.pr5 {
+	padding-right: 5px;
+}
+
+.replication-policy-content .fa-exclamation-triangle, .fa-exclamation-circle {
+	color: #ffa500;
 }

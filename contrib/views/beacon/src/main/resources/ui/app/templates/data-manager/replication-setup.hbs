@@ -15,12 +15,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
-{{#left-nav-bar currentCluster=model.currentCluster peers=model.peers}}{{/left-nav-bar}}
-<div class="container">
- <div class="row">
-   {{#if showClusterPopup}}
-    {{#cluster-initial-setup-dialog currentCluster=model.currentCluster remoteClusters=model.remoteClusters clusterAdded="clusterAdded"}}{{/cluster-initial-setup-dialog}}
-   {{/if}}
- </div>
+<div>
+  <div class="col-xs-3">
+    {{#left-nav-bar currentCluster=model.currentCluster peers=model.peers}}{{/left-nav-bar}}
+  </div>
+  <div class="col-xs-9">
+    {{#create-replication-policy}}
+    {{/create-replication-policy}}
+  </div>
+
+  <div class="row">
+    {{#if showClusterPopup}}
+      {{#cluster-initial-setup-dialog currentCluster=model.currentCluster remoteClusters=model.remoteClusters clusterAdded="clusterAdded"}}{{/cluster-initial-setup-dialog}}
+    {{/if}}
+  </div>
 </div>
 {{outlet}}
