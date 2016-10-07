@@ -14,27 +14,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import { moduleForComponent, test } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { moduleFor, test } from 'ember-qunit';
 
-moduleForComponent('create-replication-policy', 'Integration | Component | create replication policy', {
-  integration: true
+moduleFor('route:replication-policies', 'Unit | Route | replication policies', {
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
 });
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
-
-  this.render(hbs`{{create-replication-policy}}`);
-
-  assert.equal(this.$().text().trim(), '');
-
-  // Template block usage:
-  this.render(hbs`
-    {{#create-replication-policy}}
-      template block text
-    {{/create-replication-policy}}
-  `);
-
-  assert.equal(this.$().text().trim(), 'template block text');
+test('it exists', function(assert) {
+  let route = this.subject();
+  assert.ok(route);
 });

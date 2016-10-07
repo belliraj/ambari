@@ -14,27 +14,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import { moduleForComponent, test } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
-moduleForComponent('create-replication-policy', 'Integration | Component | create replication policy', {
-  integration: true
-});
-
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
-
-  this.render(hbs`{{create-replication-policy}}`);
-
-  assert.equal(this.$().text().trim(), '');
-
-  // Template block usage:
-  this.render(hbs`
-    {{#create-replication-policy}}
-      template block text
-    {{/create-replication-policy}}
-  `);
-
-  assert.equal(this.$().text().trim(), 'template block text');
+export default Ember.Route.extend({
 });

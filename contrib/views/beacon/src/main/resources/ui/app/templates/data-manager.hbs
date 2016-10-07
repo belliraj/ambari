@@ -16,11 +16,16 @@
 * limitations under the License.
 }}
 <div id="wrapper">
-  <nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container-fluid" role="navigation">
     <div class="navbar-header">
-      <a class="navbar-brand" href="index.html">Data Manager</a>
+      <a class="navbar-brand" href="#">Data Manager</a>
     </div>
-  </nav>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="">MONITOR JOBS</a></li>
+      <li>{{#link-to "data-manager.replication-policies"}}REPLICAITON POLICIES{{/link-to}}</li>
+      <li><a href="">INCOMING POLICIES</a></li>
+    </ul>
+  </div>
   <div id="page-wrapper">
     {{outlet}}
   </div>

@@ -27,7 +27,8 @@ Router.map(function() {
     this.route('setup');
     this.route('monitor');
     this.route('replication-setup');
-  });
+    this.route('replication-policies');
+  });  
 });
 
 export default Router;
