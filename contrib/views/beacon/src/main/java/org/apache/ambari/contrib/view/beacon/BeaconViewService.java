@@ -15,37 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ambari.contrib.view.fenton;
+package org.apache.ambari.contrib.view.beacon;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-/**
- * Unit test for simple App.
- */
-public class FentonImpersonatorTest extends TestCase {
-	/**
-	 * Create the test case
-	 *
-	 * @param testName
-	 *            name of the test case
-	 */
-	public FentonImpersonatorTest(String testName) {
-		super(testName);
+import org.apache.ambari.view.ViewContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.Singleton;
+
+@Singleton
+public class BeaconViewService {
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(BeaconViewService.class);
+
+	private ViewContext viewContext;
+	
+	@Inject
+	public BeaconViewService(ViewContext viewContext) {
+		super();
+		this.viewContext = viewContext;
+	}
+	
+	@Path("/beaconService")
+	public BeaconProxyService beaconProxyService(){
+		return new BeaconProxyService(viewContext);
+	}
+	@GET
+	@Path("status")
+	public String getStatus(){
+		return "ok";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(FentonImpersonatorTest.class);
-	}
-
-	/**
-	 * Rigourous Test :-)
-	 */
-	public void testApp() {
-		assertTrue(true);
-	}
 }

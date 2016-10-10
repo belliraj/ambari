@@ -15,10 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ambari.contrib.view.fenton;
+package org.apache.ambari.contrib.view.beacon;
 
-public class FentonImpersonator {
-	public static void main(String[] args) {
-		System.out.println("Hello World!");
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Unit test for simple App.
+ */
+public class BeaaconServiceImpersonatorTest extends TestCase {
+	/**
+	 * Create the test case
+	 *
+	 * @param testName
+	 *            name of the test case
+	 */
+	public BeaaconServiceImpersonatorTest(String testName) {
+		super(testName);
+	}
+
+	/**
+	 * @return the suite of tests being tested
+	 */
+	public static Test suite() {
+		return new TestSuite(BeaaconServiceImpersonatorTest.class);
+	}
+
+	/**
+	 * Rigourous Test :-)
+	 */
+	public void testApp() {
+		assertTrue(true);
 	}
 }
