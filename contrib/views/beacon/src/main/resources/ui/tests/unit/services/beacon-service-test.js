@@ -14,15 +14,15 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import Ember from 'ember';
+import { moduleFor, test } from 'ember-qunit';
 
-export default Ember.Component.extend({
-  policy : {
-    name : 'test'
-  },
-  actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
-    }
-  }
+moduleFor('service:beacon-service', 'Unit | Service | beacon service', {
+  // Specify the other units that are required for this test.
+  // needs: ['service:foo']
+});
+
+// Replace this with your real tests.
+test('it exists', function(assert) {
+  let service = this.subject();
+  assert.ok(service);
 });

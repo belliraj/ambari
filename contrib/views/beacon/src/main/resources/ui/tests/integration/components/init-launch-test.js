@@ -14,15 +14,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import Ember from 'ember';
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
 
-export default Ember.Component.extend({
-  policy : {
-    name : 'test'
-  },
-  actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
-    }
-  }
+moduleForComponent('init-launch', 'Integration | Component | init launch', {
+  integration: true
+});
+
+test('it renders', function(assert) {
+  // Set any properties with this.set('myProperty', 'value');
+  // Handle any actions with this.on('myAction', function(val) { ... });
+
+  this.render(hbs`{{init-launch}}`);
+
+  assert.equal(this.$().text().trim(), '');
+
+  // Template block usage:
+  this.render(hbs`
+    {{#init-launch}}
+      template block text
+    {{/init-launch}}
+  `);
+
+  assert.equal(this.$().text().trim(), 'template block text');
 });

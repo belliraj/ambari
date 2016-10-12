@@ -15,11 +15,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
-<div class="navbar navbar-fixed-left">
-  <ul class="nav navbar-nav">
-    {{#each registeredClusters as |cluster|}}
-      <li class="nav-list"><a>{{cluster.name}}</a></li>
-    {{/each}}
-  </ul>
+<div id="wrapper">
+  <div class="container-fluid" role="navigation">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Data Manager</a>
+    </div>
+  </div>
 </div>
-{{yield}}

@@ -38,7 +38,7 @@
               </div>
               <div class="col-xs-6">
                 <label class="control-label smaller-font">DATA CENTER</label>
-                <span class="form-control smaller-font">{{currentCluster.datacenter}}</span>
+                <span class="form-control smaller-font">{{currentCluster.colo}}</span>
               </div>
             </div>
           </div>
@@ -51,13 +51,13 @@
                 <select class="form-control" onchange={{action 'remoteClusterSelected' value="target.value"}}>
                   <option value="">Select</option>
                   {{#each remoteClusters as |cluster|}}
-                    <option value="{{cluster.id}}">{{cluster.name}}</option>
+                    <option value="{{cluster.name}}">{{cluster.name}}</option>
                   {{/each}}
                 </select>
               </div>
               <div class="col-xs-6">
                 <label class="control-label smaller-font">DATA CENTER</label>
-                <span class="form-control smaller-font">{{selectedCluster.datacenter}}</span>
+                <span class="form-control smaller-font">{{selectedCluster.colo}}</span>
               </div>
             </div>
           </div>

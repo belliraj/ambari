@@ -17,27 +17,31 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
+  beaconViewService : Ember.inject.service('beacon-view-service'),
+  beaconService : Ember.inject.service('beacon-service'),
   redirect(model) {
-    if (model.peers.length > 0 && model.policies.length > 0) {
-      this.transitionTo('data-manager.monitor');
-    } else if(model.peers.length > 0 && model.policies.length === 0){
-      this.transitionTo('data-manager.replication-setup');
+    if(model.registeredClusters.length > 0 && model.policies.length >= 0){
+      this.transitionTo('data-manager.replication-policies');
     } else {
-      this.transitionTo('data-manager.setup');
+      this.transitionTo('data-manager.replication-setup');
     }
   },
   model(){
     var deferred = Ember.RSVP.defer();
-    var currentClusterPromise = Ember.$.get('api/currentCluster');
-    currentClusterPromise.done(function(clusterInfo){
-      var clusterPromise = Ember.$.get('api/peers/'+ clusterInfo.id);
-      var policiesPromise = Ember.$.get('api/policies/'+ clusterInfo.id);
-      var promise =  Ember.RSVP.hash({
-        peers : clusterPromise,
-        policies : policiesPromise
-      });
-      deferred.resolve(promise);
+    var clusterRegisteredPromise = this.get('beaconService').getRegisteredClusters();
+    var policiesPromise = this.get('beaconService').getPolicies();
+    var currentClusterPromise = this.get('beaconViewService').getLocalClusterInfo();
+    var promise =  Ember.RSVP.hash({
+      registeredClusters : clusterRegisteredPromise,
+      policies : policiesPromise,
+      currentCluster : currentClusterPromise
     });
+    deferred.resolve(promise);
     return deferred.promise;
+  },
+  actions : {
+    goToHomePage(){
+      this.refresh();
+    }
   }
 });

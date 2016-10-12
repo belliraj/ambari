@@ -15,23 +15,33 @@
 *    limitations under the License.
 */
 import Ember from 'ember';
-import config from './config/environment';
 
-const Router = Ember.Router.extend({
-  location: config.locationType,
-  rootURL: config.rootURL
+export default Ember.Service.extend({
+  baseUrl : 'api/beaconService',
+  getRegisteredClusters (){
+    var url = this.get('baseUrl') + '/cluster/list';
+    return Ember.$.get(url);
+  },
+  registerCluster (clusterName, clusterInfo){
+    var url = this.get('baseUrl') + '/cluster/submit/' + clusterName;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      data: JSON.stringify(clusterInfo),
+      dataType: 'json'
+    });
+  },
+  getPolicies(){
+    var url = this.get('baseUrl') + '/policy/list';
+    return Ember.$.get(url);
+  },
+  createPolicy(policy){
+    var url = this.get('baseUrl') + '/policy/submit/' + policy.name;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      data: JSON.stringify(policy),
+      dataType: 'json'
+    });
+  }
 });
-
-Router.map(function() {
-  this.route('index', { path: '/' }, function(){
-
-  });
-  this.route('data-manager', function() {
-    this.route('setup');
-    this.route('monitor');
-    this.route('replication-setup');
-    this.route('replication-policies');
-  });
-});
-
-export default Router;

@@ -17,4 +17,22 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
+  beaconService : Ember.inject.service('beacon-service'),
+
+model(){
+    return this.modelFor('data-manager');
+  },
+  setupController: function(controller, model) {
+    this._super(controller, model);
+  },
+  actions : {
+    createPolicy(){
+      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
+    },
+    savePolicy(policy){
+      this.get('beaconService').createPolicy(policy);
+      Ember.getOwner(this).lookup('route:data-manager').refresh();
+      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
+    }
+  }
 });

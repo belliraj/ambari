@@ -17,12 +17,9 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  policy : {
-    name : 'test'
-  },
   actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
+    createReplication(){
+      this.sendAction('setup');
     }
   }
 });

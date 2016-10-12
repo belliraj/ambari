@@ -14,15 +14,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import Ember from 'ember';
+import constants from 'data-manager/utils/constants';
+import { module, test } from 'qunit';
 
-export default Ember.Component.extend({
-  policy : {
-    name : 'test'
-  },
-  actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
-    }
-  }
+module('Unit | Utility | constants');
+
+// Replace this with your real tests.
+test('it works', function(assert) {
+  let result = constants();
+  assert.ok(result);
 });

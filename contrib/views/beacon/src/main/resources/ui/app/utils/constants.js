@@ -14,15 +14,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 import Ember from 'ember';
 
-export default Ember.Component.extend({
-  policy : {
-    name : 'test'
-  },
-  actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
-    }
+export default Ember.Object.create({
+  MOCK_INFO : {
+    isRegisteredInBeacon : false,
+    localCluster : 'primaryCluster'
   }
 });
