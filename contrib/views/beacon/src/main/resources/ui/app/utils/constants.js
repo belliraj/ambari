@@ -20,6 +20,6 @@ import Ember from 'ember';
 export default Ember.Object.create({
   MOCK_INFO : {
     isRegisteredInBeacon : false,
-    localCluster : 'primaryCluster'
+    localCluster : 'secondaryCluster'
   }
 });

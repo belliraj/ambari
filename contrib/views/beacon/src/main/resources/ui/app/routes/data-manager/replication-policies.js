@@ -19,7 +19,17 @@ import Ember from 'ember';
 export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
 
-model(){
+  afterModel(model){
+    var registeredCluster = this.modelFor('data-manager').registeredClusters;
+    var pairedClusterNames = this.modelFor('data-manager').currentCluster.peers;
+    var pairedClusters = [];
+    pairedClusterNames.forEach((name)=>{
+      pairedClusters.push(registeredCluster.findBy('name',name));
+    });
+    model.pairedClusters = pairedClusters;
+  },
+
+  model(){
     return this.modelFor('data-manager');
   },
   setupController: function(controller, model) {

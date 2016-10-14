@@ -36,16 +36,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>ENABLED</td>
-        <td>Weekly-DR</td>
-        <td>Aug 23, 2016 11:45:56</td>
-        <td>Every Tue at 12:30pm</td>
-        <td>11:45:56</td>
-        <td>Hive</td>
-        <td>Data Center NY /Products_NYCHome/</td>
-        <td></td>
-      </tr>
+      {{#each model.policies as |policy|}}
+        <tr>
+          <td>{{policy.status}}</td>
+          <td>{{policy.name}}</td>
+          <td>{{policy.lastRun}}</td>
+          <td>{{policy.schedule}}</td>
+          <td>{{policy.runTime}}</td>
+          <td>{{policy.type}}</td>
+          <td>{{policy.destinationCluster}}</td>
+          <td></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
 </div>
@@ -56,5 +58,5 @@
   </div>
 {{/if}}
 {{#if createPolicyShown}}
-  {{#create-replication-policy savePolicy="savePolicy"}}{{/create-replication-policy}}
+  {{#create-replication-policy currentCluster=model.currentCluster pairedClusters=model.pairedClusters savePolicy="savePolicy"}}{{/create-replication-policy}}
 {{/if}}

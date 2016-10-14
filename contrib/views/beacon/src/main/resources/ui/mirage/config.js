@@ -68,7 +68,8 @@ export default function() {
       'hs2Uri':'http://localhost:10000',
       'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
       'customProperties':{queue:'default', priority:'high'},
-      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'},
+      'peers' : ['primaryCluster']
     }
   };
 
@@ -119,7 +120,8 @@ export default function() {
       'hs2Uri':'http://localhost:10000',
       'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
       'customProperties':{queue:'default', priority:'high'},
-      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'},
+      'peers' : ['primaryCluster']
     },{
       'name':'primaryCluster',
       'description':'primary',
@@ -141,19 +143,7 @@ export default function() {
   };
 
   this.get('/beaconview/localClusterInfo',()=>{
-    return {
-      'name':'primaryCluster',
-      'description':'primary',
-      'colo':'virginia',
-      'nameNodeUri':'hdfs://localhost:8020',
-      'executeUri':'localhost:8021',
-      'wfEngineUri':'http://localhost:11000/oozie',
-      'messagingUri':'tcp://localhost:61616?daemon=true',
-      'hs2Uri':'http://localhost:10000',
-      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
-      'customProperties':{queue:'default', priority:'high'},
-      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
-    };
+    return clusters[Constants.MOCK_INFO.localCluster];
   });
 
   this.get('/beaconview/clusterInfo/:name',(schema, request)=>{
@@ -162,6 +152,10 @@ export default function() {
 
   this.get('/beaconService/cluster/list',() => {
     return registeredClusters[Constants.MOCK_INFO.localCluster];
+  });
+
+  this.get('/beaconService/cluster/get/:name',() => {
+    return clusters[request.params.name];
   });
 
   this.get('/beaconService/policy/list',() => {
@@ -173,22 +167,8 @@ export default function() {
     registeredClusters[Constants.MOCK_INFO.localCluster].push(cluster);
   });
 
-  this.post('/beaconService/policy/submit/:name',() => {
-    policies[Constants.MOCK_INFO.localCluster].push({
-      name:'hivePolicy',
-      type:'HIVE',
-      dataset:'sales',
-      sourceCluster:'primaryCluster',
-      targetCluster:'backupCluster',
-      frequencyInSec:3600,
-      tags:'owner:producer@xyz.com',
-      component:'sales',
-      aclOwner:'ambari-qa',
-      aclGroup:'users',
-      aclPermission:'0x755',
-      retryAttempts:3,
-      queue:'default',
-      maxEvents:-1
-    });
+  this.post('/beaconService/policy/submit/:name',(schema, request) => {
+    var policy = JSON.parse(request.requestBody);
+    policies[Constants.MOCK_INFO.localCluster].push(policy);
   });
 }

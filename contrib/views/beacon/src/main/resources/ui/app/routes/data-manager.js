@@ -31,13 +31,13 @@ export default Ember.Route.extend({
     var clusterRegisteredPromise = this.get('beaconService').getRegisteredClusters();
     var policiesPromise = this.get('beaconService').getPolicies();
     var currentClusterPromise = this.get('beaconViewService').getLocalClusterInfo();
-    var promise =  Ember.RSVP.hash({
+    return Ember.RSVP.hash({
       registeredClusters : clusterRegisteredPromise,
       policies : policiesPromise,
       currentCluster : currentClusterPromise
     });
-    deferred.resolve(promise);
-    return deferred.promise;
+    // deferred.resolve(promise);
+    // return deferred.promise;
   },
   actions : {
     goToHomePage(){
