@@ -14,30 +14,15 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-import Ember from 'ember';
+import { moduleFor, test } from 'ember-qunit';
 
-export default Ember.Component.extend({
-  initialize : function(){
-    this.set('selectionType', 'all');
-    this.set('policy', {});
-    this.set('policy.frequencyInSec', 86400);
-    this.set('policy.type', 'HIVE')
-    this.set('policy.sourceCluster', this.get('currentCluster.name'));
-  }.on('init'),
-  actions : {
-    createPolicy(){
-      this.sendAction("savePolicy", this.get('policy'));
-    },
-    changeSchedule(type){
-      if(type === 'hourly'){
-        this.set('policy.frequencyInSec', 3600);
-      }else if(type === 'daily'){
-        this.set('policy.frequencyInSec', 86400);
-      }else if(type === 'weekly'){
-        this.set('policy.frequencyInSec', 604800);
-      }else if(type === 'monthly'){
-        this.set('policy.frequencyInSec', 2628000);
-      }
-    }
-  }
+moduleFor('service:beacon-view-service', 'Unit | Service | beacon view service', {
+  // Specify the other units that are required for this test.
+  // needs: ['service:foo']
+});
+
+// Replace this with your real tests.
+test('it exists', function(assert) {
+  let service = this.subject();
+  assert.ok(service);
 });

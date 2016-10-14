@@ -15,12 +15,11 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
+{{#if (and (gt model.policies.length 0)(not createPolicyShown))}}
 <div id="replicationPolicies">
   <div class="clearfix">
     <div class="replication-policies-title pull-left ">Replication Policies</div>
-    {{#link-to 'data-manager.replication-setup' class="btn btn-success pull-right" title="Create Replication Policy"}}
-      + CREATE REPLICATION POLICY
-    {{/link-to}}
+    <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
   </div>
 
   <table id="replication-policies-list" class="table listing table-striped table-hover replication-policies-list" cellspacing="0" width="100%">
@@ -37,16 +36,27 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>ENABLED</td>
-        <td>Weekly-DR</td>
-        <td>Aug 23, 2016 11:45:56</td>
-        <td>Every Tue at 12:30pm</td>
-        <td>11:45:56</td>
-        <td>Hive</td>
-        <td>Data Center NY /Products_NYCHome/</td>
-        <td></td>
-      </tr>
+      {{#each model.policies as |policy|}}
+        <tr>
+          <td>{{policy.status}}</td>
+          <td>{{policy.name}}</td>
+          <td>{{policy.lastRun}}</td>
+          <td>{{policy.schedule}}</td>
+          <td>{{policy.runTime}}</td>
+          <td>{{policy.type}}</td>
+          <td>{{policy.destinationCluster}}</td>
+          <td></td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
 </div>
+{{else if (not createPolicyShown)}}
+  <div class="">
+    No replication policies created.
+    <button type="button" class="btn btn-success" name="button" {{action 'createPolicy'}}>CREATE REPLICATION POLICY</button>
+  </div>
+{{/if}}
+{{#if createPolicyShown}}
+  {{#create-replication-policy currentCluster=model.currentCluster pairedClusters=model.pairedClusters savePolicy="savePolicy"}}{{/create-replication-policy}}
+{{/if}}

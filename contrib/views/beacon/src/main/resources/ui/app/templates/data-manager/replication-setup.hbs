@@ -16,17 +16,12 @@
 * limitations under the License.
 }}
 <div>
-  <div class="col-xs-3">
-    {{#left-nav-bar currentCluster=model.currentCluster peers=model.peers}}{{/left-nav-bar}}
-  </div>
-  <div class="col-xs-9">
-    {{#create-replication-policy}}
-    {{/create-replication-policy}}
-  </div>
-
+  {{#if (eq model.registeredClusters.length 0)}}
+    {{#init-launch setup="setup"}}{{/init-launch}}
+  {{/if}}
   <div class="row">
     {{#if showClusterPopup}}
-      {{#cluster-initial-setup-dialog currentCluster=model.currentCluster remoteClusters=model.remoteClusters clusterAdded="clusterAdded"}}{{/cluster-initial-setup-dialog}}
+      {{#cluster-initial-setup-dialog currentCluster=model.currentCluster remoteClusters=model.remoteClusters registerClusters="registerClusters"}}{{/cluster-initial-setup-dialog}}
     {{/if}}
   </div>
 </div>

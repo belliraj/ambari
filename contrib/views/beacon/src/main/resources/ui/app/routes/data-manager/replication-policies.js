@@ -17,4 +17,32 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
+  beaconService : Ember.inject.service('beacon-service'),
+
+  afterModel(model){
+    var registeredCluster = this.modelFor('data-manager').registeredClusters;
+    var pairedClusterNames = this.modelFor('data-manager').currentCluster.peers;
+    var pairedClusters = [];
+    pairedClusterNames.forEach((name)=>{
+      pairedClusters.push(registeredCluster.findBy('name',name));
+    });
+    model.pairedClusters = pairedClusters;
+  },
+
+  model(){
+    return this.modelFor('data-manager');
+  },
+  setupController: function(controller, model) {
+    this._super(controller, model);
+  },
+  actions : {
+    createPolicy(){
+      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
+    },
+    savePolicy(policy){
+      this.get('beaconService').createPolicy(policy);
+      Ember.getOwner(this).lookup('route:data-manager').refresh();
+      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
+    }
+  }
 });

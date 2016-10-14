@@ -29,24 +29,18 @@ export default Ember.Component.extend({
     }.bind(this));
   }.on('didInsertElement'),
   actions : {
-    remoteClusterSelected (clusterId) {
-      this.set('selectedCluster', this.get('remoteClusters').findBy('id', clusterId));
+    remoteClusterSelected (clusterName) {
+      this.set('selectedCluster', this.get('remoteClusters').findBy('name', clusterName));
     },
     onTabSelect(tab){
       this.set('selectedTab', tab);
     },
     save(){
-      var url = 'api/remoteClusters/'+this.get('currentCluster').id;
-      Ember.$.ajax({
-        type: "POST",
-        url: url,
-        data: JSON.stringify(this.get('selectedCluster')),
-        dataType: 'json',
-        success : function(){
-          this.$('#cluster-initial-dialog').modal('hide');
-          this.sendAction('clusterAdded');
-        }.bind(this)
-      });
+      var clusters = [];
+      clusters.push(this.get('currentCluster'));
+      clusters.push(this.get('selectedCluster'));
+      this.sendAction('registerClusters', clusters);
+      this.$('#cluster-initial-dialog').modal('hide');
     }
   }
 });

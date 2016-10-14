@@ -1,27 +1,29 @@
 /*
- *    Licensed to the Apache Software Foundation (ASF) under one or more
- *    contributor license agreements.  See the NOTICE file distributed with
- *    this work for additional information regarding copyright ownership.
- *    The ASF licenses this file to You under the Apache License, Version 2.0
- *    (the "License"); you may not use this file except in compliance with
- *    the License.  You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
+*    Licensed to the Apache Software Foundation (ASF) under one or more
+*    contributor license agreements.  See the NOTICE file distributed with
+*    this work for additional information regarding copyright ownership.
+*    The ASF licenses this file to You under the Apache License, Version 2.0
+*    (the "License"); you may not use this file except in compliance with
+*    the License.  You may obtain a copy of the License at
+*
+*        http://www.apache.org/licenses/LICENSE-2.0
+*
+*    Unless required by applicable law or agreed to in writing, software
+*    distributed under the License is distributed on an "AS IS" BASIS,
+*    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*    See the License for the specific language governing permissions and
+*    limitations under the License.
+*/
+import Constants from '../utils/constants';
+
 export default function() {
 
   // These comments are here to help you get started. Feel free to delete them.
 
   /*
-    Config (with defaults).
+  Config (with defaults).
 
-    Note: these only affect routes defined *after* them!
+  Note: these only affect routes defined *after* them!
   */
 
   // this.urlPrefix = '';    // make this `http://localhost:8080`, for example, if your API is on a different server
@@ -29,65 +31,144 @@ export default function() {
   // this.timing = 400;      // delay for each request, automatically set to 0 during testing
 
   /*
-    Shorthand cheatsheet:
+  Shorthand cheatsheet:
 
-    this.get('/posts');
-    this.post('/posts');
-    this.get('/posts/:id');
-    this.put('/posts/:id'); // or this.patch
-    this.del('/posts/:id');
+  this.get('/posts');
+  this.post('/posts');
+  this.get('/posts/:id');
+  this.put('/posts/:id'); // or this.patch
+  this.del('/posts/:id');
 
-    http://www.ember-cli-mirage.com/docs/v0.2.x/shorthands/
+  http://www.ember-cli-mirage.com/docs/v0.2.x/shorthands/
   */
   this.namespace = 'api';
-  var currentCluster = 'c2';
+  var currentCluster = 'Sandbox';
   var clusters = {
-    'c1' : {id:'c1', name :'Cluster1', datacenter :'DC1'},
-    'c2' : {id:'c2', name :'Cluster2', datacenter :'DC2'},
-    'c3' : {id:'c3', name :'Cluster3', datacenter :'DC3'},
+    primaryCluster : {
+      'name':'primaryCluster',
+      'description':'primary',
+      'colo':'virginia',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+    },
+    secondaryCluster : {
+      'name':'secondaryCluster',
+      'description':'secondary',
+      'colo':'texas',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'},
+      'peers' : ['primaryCluster']
+    }
   };
 
-  var peersInfo = {
-    'c1' : [
-      {id:'c2', name :'Cluster2', datacenter :'DC2'}
-    ],
-    'c2' : []
+  var pairedClusters = {
+    primaryCluster : [],
+    secondaryCluster : []
   };
 
   var remoteClustersInfo = {
-    'c1' : [
-            {id:'c3', name :'Cluster3', datacenter :'DC3'},
-            {id:'c4', name :'Cluster4', datacenter :'DC3'},
-            {id:'c5', name :'Cluster5', datacenter :'DC4'}
-          ],
-    'c2' : [
-            {id:'c6', name :'Cluster6', datacenter :'DC6'},
-            {id:'c7', name :'Cluster7', datacenter :'DC7'},
-            {id:'c8', name :'Cluster8', datacenter :'DC8'}
-          ],
-    'c3' : []
+    primaryCluster : [{
+      'name':'secondaryCluster',
+      'description':'secondary',
+      'colo':'texas',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+    }],
+    secondaryCluster : [{
+      'name':'primaryCluster',
+      'description':'primary',
+      'colo':'virginia',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+    }]
   };
 
-  this.get('/currentCluster', () => {
-    return clusters[currentCluster];
+  var registeredClusters = {
+    primaryCluster : [],
+    secondaryCluster : [{
+      'name':'secondaryCluster',
+      'description':'secondary',
+      'colo':'texas',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'},
+      'peers' : ['primaryCluster']
+    },{
+      'name':'primaryCluster',
+      'description':'primary',
+      'colo':'virginia',
+      'nameNodeUri':'hdfs://localhost:8020',
+      'executeUri':'localhost:8021',
+      'wfEngineUri':'http://localhost:11000/oozie',
+      'messagingUri':'tcp://localhost:61616?daemon=true',
+      'hs2Uri':'http://localhost:10000',
+      'tags':'consumer=consumer@xyz.com,owner=producer@xyz.com',
+      'customProperties':{queue:'default', priority:'high'},
+      'acl':{owner:'ambari-qa', group:'users', permission:'0x755'}
+    }]
+  };
+
+  var policies = {
+    primaryCluster : [],
+    secondaryCluster : []
+  };
+
+  this.get('/beaconview/localClusterInfo',()=>{
+    return clusters[Constants.MOCK_INFO.localCluster];
   });
 
-  this.get('/remoteClusters/:clusterId',(schema, request) => {
-    return remoteClustersInfo[request.params.clusterId];
+  this.get('/beaconview/clusterInfo/:name',(schema, request)=>{
+    return remoteClustersInfo[request.params.name];
   });
-  this.post('/remoteClusters/:clusterId',(schema, request) => {
+
+  this.get('/beaconService/cluster/list',() => {
+    return registeredClusters[Constants.MOCK_INFO.localCluster];
+  });
+
+  this.get('/beaconService/cluster/get/:name',() => {
+    return clusters[request.params.name];
+  });
+
+  this.get('/beaconService/policy/list',() => {
+    return policies[Constants.MOCK_INFO.localCluster];
+  });
+
+  this.post('/beaconService/cluster/submit/:name',(schema, request) => {
     var cluster = JSON.parse(request.requestBody);
-    peersInfo[request.params.clusterId].push(cluster);
-  });
-  this.get('/peers/:clusterId', (schema, request) => {
-    return peersInfo[request.params.clusterId];
+    registeredClusters[Constants.MOCK_INFO.localCluster].push(cluster);
   });
 
-  this.get('/policies/:clusterId',(schema, request)=>{
-    if(request.params.clusterId === 'c1'){
-      return [{id:1, name:'policy-1'}, {id:2, name:'policy-2'}];
-    }else{
-      return [];
-    }
+  this.post('/beaconService/policy/submit/:name',(schema, request) => {
+    var policy = JSON.parse(request.requestBody);
+    policies[Constants.MOCK_INFO.localCluster].push(policy);
   });
 }

@@ -15,23 +15,23 @@
 *    limitations under the License.
 */
 import Ember from 'ember';
-import config from './config/environment';
+import Constants from '../utils/constants';
 
-const Router = Ember.Router.extend({
-  location: config.locationType,
-  rootURL: config.rootURL
+export default Ember.Service.extend({
+  baseUrl : 'api/beaconview',
+  getLocalClusterInfo(){
+    var url = this.get('baseUrl') + '/localClusterInfo';
+    return Ember.$.get(url);
+  },
+  getRemoteClusters(name){
+    var url = this.get('baseUrl') + '/clusterInfo/' + name;
+    return Ember.$.get(url);
+  },
+  isRegisteredInBeacon(){
+    return Constants.MOCK_INFO.isRegisteredInBeacon;
+  },
+  pairCluster(clusterName){
+    var url = this.get('baseUrl') + '/pair/' + clusterName;
+    return Ember.$.post(url);
+  }
 });
-
-Router.map(function() {
-  this.route('index', { path: '/' }, function(){
-
-  });
-  this.route('data-manager', function() {
-    this.route('setup');
-    this.route('monitor');
-    this.route('replication-setup');
-    this.route('replication-policies');
-  });
-});
-
-export default Router;

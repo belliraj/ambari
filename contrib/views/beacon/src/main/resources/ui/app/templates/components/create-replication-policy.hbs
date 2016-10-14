@@ -16,136 +16,134 @@
 * limitations under the License.
 }}
 <div id="replication-policy" class="replication-policy-content">
-		<div class="col-xs-12">
-			Begin the replication process to initially copy the selected from the source cluster to the destination cluster
-		</div>
-		<ul class="nav nav-tabs">
-		  <li class="active"><a data-target="#createTab" data-toggle="tab">1. Create Replication Policy</a></li>
-		  <li><a data-target="#reviewTab" data-toggle="tab">2. Review</a></li>
-		</ul>
-		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane active create-replication-policy-tab" id="createTab">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<div class="row">
-							<div class="col-xs-6">
-								<label class="control-label smaller-font">POLICY NAME</label>
-								<input type="text" class="form-control width-forty-percent" />
-							</div>
-							<div class="col-xs-6">
-								<label class="control-label smaller-font">SERVICE</label>
-								<div>
-									<label class="radio-inline">
-									  <input type="radio" name="replicationService">HIVE
-									</label>
-									<label class="radio-inline">
-									  <input type="radio" name="replicationService">HDFS
-									</label>
-								</div>
-							</div>
+	<div class="col-xs-12">
+		Begin the replication process to initially copy the selected from the source cluster to the destination cluster
+	</div>
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-target="#createTab" data-toggle="tab">1. Create Replication Policy</a></li>
+		<li><a data-target="#reviewTab" data-toggle="tab">2. Review</a></li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active create-replication-policy-tab" id="createTab">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-6">
+							<label class="control-label smaller-font">POLICY NAME</label>
+							{{input type="text" value=policy.name class="form-control width-forty-percent"}}
 						</div>
-						<div class="row">
-							<div class="col-xs-6">
-								<label class="control-label smaller-font">SOURCE CLUSTER</label>
-								<select class="form-control width-forty-percent">
-									<option value="cluster1">cluster1</option>
-									<option value="cluster2">cluster2</option>
-								</select>
-							</div>
-							<div class="col-xs-6">
-								<label class="control-label smaller-font">DESTINATION CLUSTER</label>
-								<select class="form-control width-forty-percent">
-									<option value="dc1">dc1</option>
-									<option value="dc2">dc2</option>
-								</select>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-12">
-								<label class="control-label smaller-font">ENTER PATH OR SELECT DATABASES</label>
-								<div>
-									<label class="radio-inline">
-									  <input type="radio" name="databaseType">All
-									</label>
-									<label class="radio-inline">
-									  <input type="radio" name="databaseType">Selection
-									</label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-xs-12">
-								<i class="fa fa-exclamation-triangle pr5"></i>Selected data volume is more than maximum allowed 100TB. Please select the databases you want to move.
+						<div class="col-xs-6">
+							<label class="control-label smaller-font">SERVICE</label>
+							<div>
+								<label class="radio-inline">
+									<input type="radio" value="HIVE" checked={{if (eq policy.type 'HIVE') 'checked'}} onchange={{action (mut policy.type) value="target.value"}} name="replicationType">HIVE
+								</label>
+								<label class="radio-inline">
+									<input type="radio" value="HDFS" checked={{if (eq policy.type 'HDFS') 'checked'}} onchange={{action (mut policy.type) value="target.value"}} name="replicationType">HDFS
+								</label>
 							</div>
 						</div>
 					</div>
-				</div>
-				RUN JOB
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<div class="row">
-							<div class="col-xs-12">
-								<div>
-									<label class="radio-inline">
-									  <input type="radio" name="jobRun">Manually
-									</label>
-									<label class="radio-inline">
-									  <input type="radio" name="jobRun">On Schedule
-									</label>
-									<label class="radio-inline">
-									  <input type="radio" name="jobRun">On Data Modification
-									</label>
-								</div>
-							</div>
+					<div class="row">
+						<div class="col-xs-6">
+							<label class="control-label smaller-font">SOURCE CLUSTER</label>
+							<span class="form-control smaller-font">{{currentCluster.name}}>{{currentCluster.colo}}</span>
 						</div>
-						<div class="row">
-							<div class="col-xs-12">
-
-								<ul class="nav nav-tabs">
-									<li><a data-target="#hourlyRun" data-toggle="tab">Hourly</a></li>
-									<li class="active"><a data-target="#dailyRun" data-toggle="tab">Daily</a></li>
-									<li><a data-target="#weeklyRun" data-toggle="tab">Weekly</a></li>
-									<li><a data-target="#monthlyRun" data-toggle="tab">Monthly</a></li>
-								</ul>
-								<div class="tab-content">
-									<div role="tabpanel" class="tab-pane" id="hourlyRun">
-										Run Every Hour
-									</div>
-									<div role="tabpanel" class="tab-pane active" id="dailyRun">
-										Run Every Day
-									</div>
-									<div role="tabpanel" class="tab-pane" id="weeklyRun">
-										Run Every Week
-									</div>
-									<div role="tabpanel" class="tab-pane" id="monthlyRun">
-										Run Every Month
-									</div>
-								</div>
+						<div class="col-xs-6">
+							<label class="control-label smaller-font">DESTINATION CLUSTER</label>
+							<select class="form-control width-forty-percent" onchange={{action (mut policy.destination) value="target.value"}}>
+								<option value="">Select</option>
+								{{#each pairedClusters as |cluster|}}
+								<option value="{{cluster.name}}">{{cluster.name}}</option>
+								{{/each}}
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<label class="control-label smaller-font">ENTER PATH OR SELECT DATABASES</label>
+							<div>
+								<label class="radio-inline">
+									<input type="radio" name="databaseSelectionType" value='all' checked={{if (eq selectionType 'all') 'checked'}} onchange={{action (mut selectionType) value="target.value"}}>All
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="databaseSelectionType" value='selected' checked={{if (eq selectionType 'selected') 'checked'}} onchange={{action (mut selectionType) value="target.value"}}>Selection
+								</label>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="clearfix">
-					<button class="btn btn-default pull-right" role="button">GO TO REVIEW</button>
+					<div class="row">
+						<div class="col-xs-12">
+							<i class="fa fa-exclamation-triangle pr5"></i>Selected data volume is more than maximum allowed 100TB. Please select the databases you want to move.
+						</div>
+					</div>
 				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane review-tab" id="reviewTab">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						Data replication process for data selected from cluster *** using replication policy *** will be started.<br /><br />
-
-						Transfer Details:<br />
-						Total Data Volume:<br />
-						Transfer Time:<br />
-						Files:<br />
-						Destination:<br />
-
-						<i class="fa fa-exclamation-circle pr5"></i>The first run of the replication policy may take additional time.
+			RUN JOB
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row hidden">
+						<div class="col-xs-12">
+							<div>
+								<label class="radio-inline">
+									<input type="radio" name="jobRun">Manually
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="jobRun">On Schedule
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="jobRun">On Data Modification
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<ul class="nav nav-tabs">
+								<li {{action 'changeSchedule' 'hourly'}}><a data-target="#hourlyRun" data-toggle="tab">Hourly</a></li>
+								<li {{action 'changeSchedule' 'daily'}} class="active"><a data-target="#dailyRun" data-toggle="tab">Daily</a></li>
+								<li {{action 'changeSchedule' 'weekly'}}><a data-target="#weeklyRun" data-toggle="tab">Weekly</a></li>
+								<li {{action 'changeSchedule' 'monthly'}}><a data-target="#monthlyRun" data-toggle="tab">Monthly</a></li>
+							</ul>
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane" id="hourlyRun">
+									Run Every Hour
+								</div>
+								<div role="tabpanel" class="tab-pane active" id="dailyRun">
+									Run Every Day
+								</div>
+								<div role="tabpanel" class="tab-pane" id="weeklyRun">
+									Run Every Week
+								</div>
+								<div role="tabpanel" class="tab-pane" id="monthlyRun">
+									Run Every Month
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="clearfix">
-					<button class="btn btn-success pull-right" role="button">SUBMIT</button>
-				</div>
+			</div>
+			<div class="clearfix">
+				<button class="btn btn-default pull-right" role="button">GO TO REVIEW</button>
 			</div>
 		</div>
+		<div role="tabpanel" class="tab-pane review-tab" id="reviewTab">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					Data replication process for data selected from cluster *** using replication policy *** will be started.<br /><br />
+
+					Transfer Details:<br />
+					Total Data Volume:<br />
+					Transfer Time:<br />
+					Files:<br />
+					Destination:<br />
+
+					<i class="fa fa-exclamation-circle pr5"></i>The first run of the replication policy may take additional time.
+				</div>
+			</div>
+			<div class="clearfix">
+				<button class="btn btn-success pull-right" role="button" {{action 'createPolicy'}}>SUBMIT</button>
+			</div>
+		</div>
+	</div>
 </div>
