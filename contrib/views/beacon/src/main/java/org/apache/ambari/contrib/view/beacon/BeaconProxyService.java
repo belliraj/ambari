@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,7 +37,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.ambari.view.URLStreamProvider;
 import org.apache.ambari.view.ViewContext;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -55,10 +51,13 @@ public class BeaconProxyService {
 	private ViewContext viewContext;
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
 	private static final String DEFAULT_SERVICE_URI = "http://sandbox.hortonworks.com:25000/beacon";
+	private Utils utils = new Utils();
+	private AmbariUtils ambariUtils;
 
 	public BeaconProxyService(ViewContext context) {
 		super();
 		this.viewContext = context;
+		this.ambariUtils = new AmbariUtils(viewContext);
 	}
 
 	@GET
@@ -160,65 +159,15 @@ public class BeaconProxyService {
 	private InputStream readFromBeaconService(HttpHeaders headers,
 			String urlToRead, String method, String body,
 			Map<String, String> customHeaders) {
-		URLStreamProvider streamProvider = viewContext.getURLStreamProvider();
-		Map<String, String> newHeaders = getHeaders(headers);
-		newHeaders.put(USER_NAME_HEADER, USER_BEACON_SUPER);
-
-		newHeaders.put(DO_AS_HEADER, viewContext.getUsername());
-		newHeaders.put("Accept", MediaType.APPLICATION_JSON);
-		if (customHeaders != null) {
-			newHeaders.putAll(customHeaders);
+		if (customHeaders == null) {
+			customHeaders = new HashMap<String, String>();
 		}
-		LOGGER.info(String.format("Proxy request for url: [%s] %s", method,
-				urlToRead));
-		boolean securityEnabled = isSecurityEnabled();
-		LOGGER.debug(String.format("IS security enabled:[%b]", securityEnabled));
-		InputStream stream = null;
-		try {
-			if (securityEnabled) {
-				stream = streamProvider.readAsCurrent(urlToRead, method, body,
-						newHeaders);
-
-			} else {
-				stream = streamProvider.readFrom(urlToRead, method, body,
-						newHeaders);
-			}
-		} catch (IOException e) {
-			LOGGER.error("error talking to beacon", e);
-			throw new RuntimeException(e);
-		}
+		customHeaders.put(USER_NAME_HEADER, USER_BEACON_SUPER);
+		customHeaders.put(DO_AS_HEADER, viewContext.getUsername());
+		customHeaders.put("Accept", MediaType.APPLICATION_JSON);
+		InputStream stream = ambariUtils.readFromUrl(urlToRead, method, body,
+				headers, customHeaders);
 		return stream;
-	}
-
-	public Map<String, String> getHeaders(HttpHeaders headers) {
-		MultivaluedMap<String, String> requestHeaders = headers
-				.getRequestHeaders();
-		Set<Entry<String, List<String>>> headerEntrySet = requestHeaders
-				.entrySet();
-		HashMap<String, String> headersMap = new HashMap<String, String>();
-		for (Entry<String, List<String>> headerEntry : headerEntrySet) {
-			String key = headerEntry.getKey();
-			List<String> values = headerEntry.getValue();
-			headersMap.put(key, strJoin(values, ","));
-		}
-		return headersMap;
-	}
-
-	public String strJoin(List<String> strings, String separator) {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0, il = strings.size(); i < il; i++) {
-			if (i > 0) {
-				stringBuilder.append(separator);
-			}
-			stringBuilder.append(strings.get(i));
-		}
-		return stringBuilder.toString();
-	}
-
-	private boolean isSecurityEnabled() {
-		boolean securityEnabled = Boolean.valueOf(viewContext.getInstanceData()
-				.get("security_enabled"));
-		return securityEnabled;
 	}
 
 	private String buildURI(UriInfo ui) {
@@ -254,9 +203,8 @@ public class BeaconProxyService {
 	}
 
 	private String getServiceUri() {
-		String serviceURI = viewContext.getProperties().get(SERVICE_URI_PROP) != null ? viewContext
-				.getProperties().get(SERVICE_URI_PROP) : DEFAULT_SERVICE_URI;
-		return serviceURI;
+		return utils.getServiceUri(viewContext, SERVICE_URI_PROP,
+				DEFAULT_SERVICE_URI);
 	}
 
 }
