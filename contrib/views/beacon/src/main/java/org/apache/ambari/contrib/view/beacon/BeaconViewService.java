@@ -17,6 +17,7 @@
  */
 package org.apache.ambari.contrib.view.beacon;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -75,6 +76,12 @@ public class BeaconViewService {
 		String hiveDbs = readFromHiveService(headers, hiveDBGetUrl, "GET",
 				null, null);
 		return Response.ok(hiveDbs).build();
+	}
+	
+	@GET
+	@Path("listRemoteClusters")
+	public List<ClusterInfo> getRemoteClusters(@Context HttpHeaders headers) {
+		return ambariDelegate.getRemoteClusters();		
 	}
 
 	@GET
