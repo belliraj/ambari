@@ -22,7 +22,7 @@
   <min-ambari-version>2.0.*</min-ambari-version>
   <resource>
     <name>proxy</name>
-    <service-class>org.apache.oozie.ambari.view.OozieProxyImpersonator</service-class>
+    <service-class>org.apache.ambari.contrib.view.beacon.BeaconProxyService</service-class>
   </resource>
 
   <parameter>

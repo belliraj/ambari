@@ -36,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.inject.Inject;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.commons.io.IOUtils;
@@ -54,6 +55,7 @@ public class BeaconProxyService {
 	private Utils utils = new Utils();
 	private AmbariUtils ambariUtils;
 
+	@Inject
 	public BeaconProxyService(ViewContext context) {
 		super();
 		this.viewContext = context;

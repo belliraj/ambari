@@ -23,9 +23,7 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('index', { path: '/' }, function(){
-
-  });
+  //this.route('index');
   this.route('data-manager', function() {
     this.route('setup');
     this.route('monitor');
