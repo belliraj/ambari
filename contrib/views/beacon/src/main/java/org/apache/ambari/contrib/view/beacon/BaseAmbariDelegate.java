@@ -30,7 +30,7 @@ import com.google.gson.JsonParser;
 public abstract class BaseAmbariDelegate {
 	protected static final ScheduledExecutorService excutorPool = Executors
 			.newScheduledThreadPool(3);
-	protected static final String DESIRED_CONFIGS_PATH = "/desired_configs/*";
+	protected static final String DESIRED_CONFIGS_PATH = "?fields=Clusters/desired_configs";
 	protected Map<String, String> getTagMap(JsonElement json) {
 		HashMap<String, String> tagMap = new HashMap<String, String>();
 		JsonObject desiredConfigs = json.getAsJsonObject().get("Clusters")

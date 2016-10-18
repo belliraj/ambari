@@ -30,13 +30,13 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.inject.Inject;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.commons.io.IOUtils;
@@ -51,11 +51,11 @@ public class BeaconProxyService {
 	private static final String DO_AS_HEADER = "doAs";
 	private ViewContext viewContext;
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
-	private static final String DEFAULT_SERVICE_URI = "http://sandbox.hortonworks.com:25000/beacon";
+	//private static final String DEFAULT_SERVICE_URI = "http://sandbox.hortonworks.com:25000/beacon";
+	private static final String DEFAULT_SERVICE_URI = "http://localhost:8090";
 	private Utils utils = new Utils();
 	private AmbariUtils ambariUtils;
 
-	@Inject
 	public BeaconProxyService(ViewContext context) {
 		super();
 		this.viewContext = context;
@@ -64,6 +64,7 @@ public class BeaconProxyService {
 
 	@GET
 	@Path("/{path: .*}")
+	@Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN,MediaType.TEXT_HTML,MediaType.APPLICATION_XML})
 	public Response handleGet(@Context HttpHeaders headers, @Context UriInfo ui) {
 		try {
 			String serviceURI = buildURI(ui);
@@ -78,6 +79,7 @@ public class BeaconProxyService {
 
 	@POST
 	@Path("/{path: .*}")
+	@Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN,MediaType.TEXT_HTML,MediaType.APPLICATION_XML})
 	public Response handlePost(String xml, @Context HttpHeaders headers,
 			@Context UriInfo ui) {
 		try {
@@ -92,6 +94,7 @@ public class BeaconProxyService {
 
 	@DELETE
 	@Path("/{path: .*}")
+	@Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN,MediaType.TEXT_HTML,MediaType.APPLICATION_XML})
 	public Response handleDelete(@Context HttpHeaders headers,
 			@Context UriInfo ui) {
 		try {
@@ -106,6 +109,7 @@ public class BeaconProxyService {
 
 	@PUT
 	@Path("/{path: .*}")
+	@Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN,MediaType.TEXT_HTML,MediaType.APPLICATION_XML})
 	public Response handlePut(String body, @Context HttpHeaders headers,
 			@Context UriInfo ui) {
 
