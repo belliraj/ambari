@@ -50,7 +50,7 @@ public class BeaconViewService {
 	private RemoteAmbariDelegate remoteAmbariDelegate;
 	private AmbariDelegate ambariDelegate;
 	private AmbariUtils ambariUtils;
-
+	
 	@Inject
 	public BeaconViewService(ViewContext viewContext) {
 		super();
@@ -60,7 +60,7 @@ public class BeaconViewService {
 		ambariUtils = new AmbariUtils(viewContext);
 	}
 
-	@Path("/beaconService")
+	@Path("beaconService")
 	public BeaconProxyService beaconProxyService() {
 		return new BeaconProxyService(viewContext);
 	}

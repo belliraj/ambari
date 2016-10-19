@@ -26,7 +26,8 @@ module.exports = function(environment) {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
         // e.g. 'with-controller': true
-      }
+      },
+      API_URL : "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy",
     },
 
     APP: {
@@ -35,9 +36,10 @@ module.exports = function(environment) {
     }
   };
   ENV['ember-cli-mirage'] = {
-     enabled: true
+     enabled: false
   }
   if (environment === 'development') {
+    ENV.locationType = 'hash';
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;

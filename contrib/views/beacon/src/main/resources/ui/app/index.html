@@ -26,11 +26,19 @@
     {{content-for "head"}}
 
     <link rel="stylesheet" href="assets/vendor.css">
-    <link rel="stylesheet" href="assets/data-manager.css">``
+    <link rel="stylesheet" href="assets/data-manager.css">
 
     {{content-for "head-footer"}}
   </head>
+
   <body>
+    <div id="wrapper">
+      <div class="container-fluid" role="navigation">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Data Manager</a>
+        </div>
+      </div>
+    </div>
     {{content-for "body"}}
 
     <script src="assets/vendor.js"></script>
@@ -38,4 +46,40 @@
 
     {{content-for "body-footer"}}
   </body>
+  <script type="text/javascript">
+var AmbariViewHelper = {
+    isAmbariView: function() {
+        return window.location.href.indexOf("/views/") > 0;
+    },
+    getViewInfo: function() {
+        var tokens = window.location.href.substring(window.location.href.indexOf("/views/") + 7).split("/");
+        var info = {
+            name: tokens[0],
+            version: tokens[1],
+            instance: tokens[2]
+        };
+        info.API_URL = ["/api/v1/views/", info.name, "/versions/", info.version, "/instances/" + info.instance].join("");
+        return info;
+    },
+    loadInstanceInfo: function() {
+        var viewInfo = this.getViewInfo();
+        $.ajax({
+            dataType: "json",
+            url: viewInfo.API_URL,
+            async: false,
+            success: function(result) {
+                Ember.ENV.instanceInfo = result;
+                // Update the API URL pointing to Ambari View Resource
+                Ember.ENV.API_URL = viewInfo.API_URL + "/resources/proxy";
+                Ember.ENV.FILE_API_URL = viewInfo.API_URL + "/resources/proxy/fileServices";
+            }
+        });
+    }
+};
+
+if (AmbariViewHelper.isAmbariView()) {
+    $('body').addClass("ambari-view");
+    AmbariViewHelper.loadInstanceInfo();
+}
+</script>
 </html>
