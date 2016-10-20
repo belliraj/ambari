@@ -19,6 +19,7 @@ package org.apache.ambari.contrib.view.beacon;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -42,6 +44,8 @@ import org.apache.ambari.view.ViewContext;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 public class BeaconProxyService {
 	private final static Logger LOGGER = LoggerFactory
@@ -147,6 +151,7 @@ public class BeaconProxyService {
 		InputStream stream = readFromBeaconService(headers, urlToRead,
 				httpMethod, body, customHeaders);
 		String stringResponse = null;
+		GenericEntity<Object> entity = null;
 		try {
 			stringResponse = IOUtils.toString(stream);
 		} catch (IOException e) {
@@ -157,9 +162,11 @@ public class BeaconProxyService {
 			response = Response.status(Response.Status.BAD_REQUEST)
 					.entity(stringResponse).type(MediaType.TEXT_PLAIN).build();
 		} else {
-			response = Response.status(Response.Status.OK)
-					.entity(stringResponse).type(deduceType(stringResponse))
-					.build();
+			Gson gson = new Gson();
+			Object object = gson.fromJson(stringResponse, Object.class);
+			entity = new GenericEntity<Object>(object) {};
+			response = Response.status(Response.Status.OK).entity(entity)
+					.type(deduceType(stringResponse)).build();
 		}
 		return response;
 	}
