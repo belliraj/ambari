@@ -44,17 +44,19 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 	// "hive.metastore.uris";
 	// private static final String FS_KEY = "fs.defaultFS";
 	private final AmbariApi ambariApi;
+	private ViewContext viewContext;
 
 	public AmbariDelegate(ViewContext viewContext) {
 		super();
-
+		this.viewContext = viewContext;
 		this.ambariApi = new AmbariApi(viewContext);
 		this.ambariApi.setRequestedBy(VIEW_NAME);
 
 	}
 
 	public List<ClusterInfo> getRemoteClusters() {
-		JsonElement resp = requestClusterAPIAsJson("remoteclusters");
+		JsonElement resp = readFromAmbariAsJson("remoteclusters", "GET", null,
+				null);
 		JsonObject remoteClusterJsonObj = resp.getAsJsonObject();
 		ArrayList<ClusterInfo> remoteClusters = new ArrayList<ClusterInfo>();
 		if (remoteClusterJsonObj.get("items") != null) {
@@ -67,18 +69,19 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 				String clusterName = clusterObject.get("ClusterInfo")
 						.getAsJsonObject().get("name").getAsString();
 				cluster.setName(clusterName);
+				remoteClusters.add(cluster);
 			}
 		}
 		return remoteClusters;
 	}
-	
-	private String getConfigurationData(String configurationType,String tag) {
-		String configurationData = requestClusterAPI(getConfigurationPath(configurationType, tag));
+
+	private String getConfigurationData(String configurationType, String tag,Map<String, String> headers) {
+		String configurationData = requestClusterAPI(getConfigurationPath(
+				configurationType, tag),headers);
 		return configurationData;
 	}
 
-	public ClusterDetailInfo getLocalClusterDetail(
-			String configurationTypes[]) {
+	public ClusterDetailInfo getLocalClusterDetail(String configurationTypes[],final Map<String, String> headers) {
 		// Map<String, String> clusterDetail = new HashMap<String, String>();
 		// String webHdfsUrl = viewContext.getProperties().get("webhdfs.url");
 		// String hiveUri =
@@ -86,24 +89,22 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 		// clusterDetail.put(FS_KEY, webHdfsUrl);
 		// clusterDetail.put(HIVE_METASTORE_URI_KEY, hiveUri);
 		// return clusterDetail;
-		Map<String, String> allDesiredTagMap = getAllDesiredTag();
+		Map<String, String> allDesiredTagMap = getAllDesiredTag(headers);
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		for (final String configurationType : configurationTypes) {
 			final String tag = allDesiredTagMap.get(configurationType);
 			Callable<String> callable = new Callable<String>() {
 				@Override
 				public String call() throws Exception {
-					return getConfigurationData(
-							configurationType, tag);
+					return getConfigurationData(configurationType, tag,headers);
 				}
 
-			
 			};
 			Future<String> future = excutorPool.submit(callable);
 			futures.add(future);
 		}
 		ClusterDetailInfo clusterDetails = new ClusterDetailInfo();
-
+		clusterDetails.setName(viewContext.getCluster().getName());
 		for (int i = 0; i < futures.size(); i++) {
 			Future<String> result;
 			try {
@@ -120,19 +121,58 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 		return clusterDetails;
 	}
 
-	private Map<String, String> getAllDesiredTag() {
-		JsonElement json = requestClusterAPIAsJson(DESIRED_CONFIGS_PATH);
+	private Map<String, String> getAllDesiredTag(Map<String, String> headers) {
+		JsonElement json = requestClusterAPIAsJson(DESIRED_CONFIGS_PATH,headers);
 		return getTagMap(json);
 	}
 
-	private JsonElement requestClusterAPIAsJson(String path) {
-		String resp = requestClusterAPI(path);
+	private JsonElement requestClusterAPIAsJson(String path, Map<String, String> headers) {
+		String resp = requestClusterAPI(path,headers);
 		return new JsonParser().parse(resp);
 	}
 
-	private String requestClusterAPI(String path) {
+	private String requestClusterAPI(String path, Map<String, String> headers) {
+		// return requestClusterAPIv1(path);
+		return requestClusterAPIv2(path,headers);
+
+	}
+
+	private String requestClusterAPIv2(String path, Map<String, String> headers) {
+		if(headers.get("Accept-Encoding") != null){
+			headers.remove("Accept-Encoding");
+		}
+		return readFromAmbari(AmbariApi.API_PREFIX
+				+ viewContext.getCluster().getName() + "/" + path, "GET", null,
+				headers);
+	}
+
+	private String requestClusterAPIv1(String path) {
 		try {
 			String resp = this.ambariApi.requestClusterAPI(path);
+			return resp;
+		} catch (AmbariApiException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		} catch (AmbariHttpException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	private JsonElement readFromAmbariAsJson(String path, String method,
+			String data, Map<String, String> headers) {
+		String resp = readFromAmbari(path, method, data, headers);
+		return new JsonParser().parse(resp);
+	}
+
+	private String readFromAmbari(String path, String method, String data,
+			Map<String, String> headers) {
+		try {
+			if (!path.startsWith("/api")) {
+				path = "/api/v1/" + path;
+			}
+			String resp = this.ambariApi.readFromAmbari(path, method, data,
+					headers);
 			return resp;
 		} catch (AmbariApiException e) {
 			LOGGER.error(e.getMessage(), e);

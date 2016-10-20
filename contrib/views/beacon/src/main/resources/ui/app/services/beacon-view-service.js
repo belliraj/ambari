@@ -18,13 +18,17 @@ import Ember from 'ember';
 import Constants from '../utils/constants';
 
 export default Ember.Service.extend({
-  baseUrl : 'api/beaconview',
+  baseUrl : Ember.ENV.API_URL,
   getLocalClusterInfo(){
-    var url = this.get('baseUrl') + '/localClusterInfo';
+    var url = this.get('baseUrl') + '/localClusterDetails';
     return Ember.$.get(url);
   },
-  getRemoteClusters(name){
-    var url = this.get('baseUrl') + '/clusterInfo/' + name;
+  getRemoteClusterInfo(ambariUrl){
+    var url = this.get('baseUrl') + '/remoteClusterDetails?ambariUrl=' + ambariUrl;
+    return Ember.$.get(url);
+  },
+  getRemoteClusters(){
+    var url = this.get('baseUrl') + '/listRemoteClusters';
     return Ember.$.get(url);
   },
   isRegisteredInBeacon(){

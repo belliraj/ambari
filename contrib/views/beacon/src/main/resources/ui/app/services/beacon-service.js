@@ -17,7 +17,7 @@
 import Ember from 'ember';
 
 export default Ember.Service.extend({
-  baseUrl : 'api/beaconService',
+  baseUrl : Ember.ENV.API_URL + '/beaconService/api/beacon',
   getRegisteredClusters (){
     var url = this.get('baseUrl') + '/cluster/list';
     return Ember.$.get(url);

@@ -48,6 +48,7 @@
     <module>hueambarimigration</module>
     <module>hive-next</module>
     <module>wfmanager</module>
+	<module>beacon</module>
   </modules>
   <build>
     <pluginManagement>

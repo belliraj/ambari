@@ -16,7 +16,7 @@
 * limitations under the License.
 }}
 <div>
-  {{#if (eq model.registeredClusters.length 0)}}
+  {{#if (eq model.registeredClusters.totalResults 0)}}
     {{#init-launch setup="setup"}}{{/init-launch}}
   {{/if}}
   <div class="row">

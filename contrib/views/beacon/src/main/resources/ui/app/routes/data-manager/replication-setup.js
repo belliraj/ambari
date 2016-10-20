@@ -31,13 +31,7 @@ export default Ember.Route.extend({
 
   model(){
     var currentCluster = this.modelFor('data-manager').currentCluster;
-    var deferred = Ember.RSVP.defer();
-    var remoteClustersPromise = this.get('beaconViewService').getRemoteClusters(currentCluster.name);
-    var promise =  Ember.RSVP.hash({
-      remoteClusters : remoteClustersPromise,
-    });
-    deferred.resolve(promise);
-    return deferred.promise;
+    return this.get('beaconViewService').getRemoteClusters();
   },
 
   actions : {

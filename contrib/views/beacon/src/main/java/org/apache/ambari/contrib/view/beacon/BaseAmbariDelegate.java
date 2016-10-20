@@ -63,7 +63,7 @@ public abstract class BaseAmbariDelegate {
 	}
 	protected String getConfigurationPath(
 			final String configurationType, final String tag) {
-		return "/configurations?type=" + configurationType
+		return "configurations?type=" + configurationType
 									+ "&tag=" + tag;
 	}
 }

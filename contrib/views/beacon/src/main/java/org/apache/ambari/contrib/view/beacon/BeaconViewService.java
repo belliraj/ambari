@@ -89,7 +89,8 @@ public class BeaconViewService {
 	public ClusterDetailInfo getLocalClusterDetail(@Context HttpHeaders headers) {
 		//ClusterDetailInfo clusterDetailInfo = new ClusterDetailInfo();
 		//clusterDetailInfo.setName(viewContext.getCluster().getName());
-		return ambariDelegate.getLocalClusterDetail(configTypes);		
+		
+		return ambariDelegate.getLocalClusterDetail(configTypes,utils.getHeaders(headers));		
 	}
 
 	@POST

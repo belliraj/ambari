@@ -20,7 +20,7 @@ export default Ember.Route.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   beaconService : Ember.inject.service('beacon-service'),
   redirect(model) {
-    if(model.registeredClusters.length > 0 && model.policies.length >= 0){
+    if(model.registeredClusters.totalResults > 0 && model.policies.length >= 0){
       this.transitionTo('data-manager.replication-policies');
     } else {
       this.transitionTo('data-manager.replication-setup');
