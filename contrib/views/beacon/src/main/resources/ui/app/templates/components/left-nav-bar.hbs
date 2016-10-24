@@ -17,8 +17,10 @@
 }}
 <div class="navbar navbar-fixed-left">
   <ul class="nav navbar-nav">
-    {{#each registeredClusters as |cluster|}}
-      <li class="nav-list"><a>{{cluster.name}}</a></li>
+    {{#each registeredClusters.entity as |cluster|}}
+      <li class="nav-list" class="{{if (eq currentCluster.name cluster.name) "active"}}"><a>{{cluster.name}}</a></li>
+    {{else}}
+      <li class="nav-list">Initializing...</li>
     {{/each}}
   </ul>
 </div>

@@ -30,18 +30,9 @@ import com.google.gson.JsonParser;
 public abstract class BaseAmbariDelegate {
 	protected static final ScheduledExecutorService excutorPool = Executors
 			.newScheduledThreadPool(3);
+	protected static final String API_PREFIX = "/api/v1";
 	protected static final String DESIRED_CONFIGS_PATH = "?fields=Clusters/desired_configs";
-	protected Map<String, String> getTagMap(JsonElement json) {
-		HashMap<String, String> tagMap = new HashMap<String, String>();
-		JsonObject desiredConfigs = json.getAsJsonObject().get("Clusters")
-				.getAsJsonObject().get("desired_configs").getAsJsonObject();
-		for (Map.Entry<String, JsonElement> entry : desiredConfigs.entrySet()) {
-			String tag = entry.getValue().getAsJsonObject().get("tag")
-					.getAsString();
-			tagMap.put(entry.getKey(), tag);
-		}
-		return tagMap;
-	}
+
 	protected void processConfiguration(String config,
 			ClusterDetailInfo clusterDetails) {
 		JsonElement configObj = new JsonParser().parse(config);
@@ -66,4 +57,5 @@ public abstract class BaseAmbariDelegate {
 		return "configurations?type=" + configurationType
 									+ "&tag=" + tag;
 	}
+	
 }

@@ -64,6 +64,9 @@ public class Utils {
 	}
 
 	public Map<String, String> getHeaders(HttpHeaders headers) {
+		if (headers==null){
+			return new HashMap<String, String>();
+		}
 		MultivaluedMap<String, String> requestHeaders = headers
 				.getRequestHeaders();
 		Set<Entry<String, List<String>>> headerEntrySet = requestHeaders

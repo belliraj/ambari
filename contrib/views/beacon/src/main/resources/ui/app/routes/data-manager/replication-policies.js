@@ -23,10 +23,12 @@ export default Ember.Route.extend({
     var registeredCluster = this.modelFor('data-manager').registeredClusters;
     var pairedClusterNames = this.modelFor('data-manager').currentCluster.peers;
     var pairedClusters = [];
-    pairedClusterNames.forEach((name)=>{
-      pairedClusters.push(registeredCluster.findBy('name',name));
-    });
-    model.pairedClusters = pairedClusters;
+    if(pairedClusterNames){
+      pairedClusterNames.forEach((name)=>{
+        pairedClusters.push(registeredCluster.findBy('name',name));
+      });
+      model.pairedClusters = pairedClusters;
+    }
   },
 
   model(){
