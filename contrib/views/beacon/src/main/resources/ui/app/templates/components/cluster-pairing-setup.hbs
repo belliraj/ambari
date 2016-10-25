@@ -38,9 +38,15 @@
         <div class="col-xs-2">
           <span class="smaller-font">{{localClusterDetails.name}}</span>
         </div>
+        {{#if sourceRegistered}}
+        <div class="col-xs-5">
+          <label class="smaller-font">{{localClusterDetails.colo}}</label>
+        </div>
+        {{else}}
         <div class="col-xs-5">
           {{input class="smaller-font" value= localClusterDetails.colo}}
         </div>
+        {{/if}}
       </div>
     </div>
   </div>
@@ -76,7 +82,7 @@
           <span class="smaller-font">{{cluster.name}}</span>
         </div>
         <div class="col-xs-2">
-          {{input class="smaller-font" value= cluster.colo}}
+          {{input class="smaller-font" value= cluster.dataCenter}}
         </div>
         <div class="col-xs-2">
           {{input class="smaller-font" value= cluster.username}}
@@ -85,10 +91,19 @@
           {{input type="password" class="smaller-font" value= cluster.password}}
         </div>
         <div class="col-xs-2">
-          <button type="button" class="smaller-font btn btn-success" name="button" {{action 'pairCluster' index}}>Start Pairing</button>
+          {{#if (contains sourceClusterPeers cluster)}}
+            <button type="button" class="smaller-font btn btn-success" name="button">Paired</button>
+          {{else}}
+            <button type="button" class="smaller-font btn btn-success" name="button" {{action 'pairCluster' index}}>Start Pairing</button>
+          {{/if}}
         </div>
       </div>
       {{/each}}
+      {{#if statusMessage}}
+        <div class="row status-bar">
+          <span class="smaller-font">{{statusMessage}}</span>
+        </div>
+      {{/if}}
     </div>
   </div>
 </div>

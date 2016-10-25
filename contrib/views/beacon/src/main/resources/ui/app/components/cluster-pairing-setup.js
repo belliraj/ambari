@@ -21,13 +21,22 @@ export default Ember.Component.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   errorHandler : Ember.inject.service('error-handler'),
   localClusterDetails : {},
+  sourceClusterRegistrationInfo : Ember.computed('registeredClusters.entity.[]', function(){
+    return this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'));
+  }),
+  sourceClusterPeers : Ember.computed('sourceClusterRegistrationInfo.peers.@each.id', function(){
+    return this.get('sourceClusterRegistrationInfo').peers;
+  }),
+  sourceRegistered : Ember.computed('sourceClusterRegistrationInfo', function(){
+    return !Ember.isEmpty(this.get('sourceClusterRegistrationInfo'));
+  }),
   initialize : function(){
-    var localCluster = this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'));
-    if(localCluster){
-      this.set('localClusterDetails', Ember.copy(localCluster));
+    if(this.get('sourceClusterRegistrationInfo')){
+      this.set('localClusterDetails', Ember.copy(this.get('sourceClusterRegistrationInfo')));
     }else{
       this.set('localClusterDetails', this.extractRegistrationInfo(this.get('currentCluster')));
     }
+    this.get('sourceClusterPeers');
   }.on('init'),
   extractRegistrationInfo(cluster){
     var clusterInfo = {};
@@ -60,6 +69,7 @@ export default Ember.Component.extend({
           this.set('statusMessage', 'Registering source cluster...');
           this.registerCluster(this.get('localClusterDetails.name'), this.get('localClusterDetails')).done(()=>{
             resolve();
+            this.sendAction('update');
           }.bind(this)).fail(()=>{
             reject();
           });
@@ -74,6 +84,7 @@ export default Ember.Component.extend({
             this.set('statusMessage', 'Registering target cluster...');
             this.registerCluster(targetClusterInfo.name, this.extractRegistrationInfo(targetClusterInfo)).done(()=>{
               resolve();
+              this.sendAction('update');
             }.bind(this)).fail(()=>{
               reject();
             });
@@ -86,6 +97,7 @@ export default Ember.Component.extend({
       return new Ember.RSVP.Promise((resolve, reject) => {
         this.set('statusMessage', 'Pairing source and target clusters.');
         this.get('beaconService').pairClusters(targetClusterInfo.name, targetClusterInfo.remoteBeaconEndpoint).done(()=>{
+          this.set('statusMessage', 'Paired source and target clusters.');
           resolve();
         }.bind(this)).fail(()=>{
           reject();
@@ -99,22 +111,22 @@ export default Ember.Component.extend({
           this.getTargetClusterInfo(targetCluster).then((clusterInfo)=>{
             this.registerTargetCluster(clusterInfo).then(()=>{
               this.pairClusters(clusterInfo).then(()=>{
-                this.sendAction('refresh');
+                this.sendAction('update');
               }).catch(()=>{
                 this.sendAction('onError', {message : 'Pairing of clusters failed.'});
-                this.sendAction('refresh');
+                this.sendAction('update');
               }.bind(this));
-            }.bind(this)).catch(()=>{
+            }.bind(this)).catch(() => {
               this.sendAction('onError',{message : 'Registration of target cluster failed.'});
-              this.sendAction('refresh');
+              this.sendAction('update');
             }.bind(this));
-          }.bind(this)).catch(()=>{
+          }.bind(this)).catch(() => {
             this.sendAction('onError', {message : 'Could not retrieve remote cluster details.'});
-            this.sendAction('refresh');
+            this.sendAction('update');
           }.bind(this));
-        }.bind(this)).catch(()=>{
+        }.bind(this)).catch(() => {
           this.sendAction('onError', {message : 'Registration of source cluster failed.'});
-          this.sendAction('refresh');
+          this.sendAction('update');
         }.bind(this));
       }
     }

@@ -30,7 +30,6 @@ export default Ember.Route.extend({
     }
   },
   model(){
-    var deferred = Ember.RSVP.defer();
     var clusterRegisteredPromise = this.get('beaconService').getRegisteredClusters();
     var policiesPromise = this.get('beaconService').getPolicies();
     var currentClusterPromise = this.get('beaconViewService').getLocalClusterInfo();
