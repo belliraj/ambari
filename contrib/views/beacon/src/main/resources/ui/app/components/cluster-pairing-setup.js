@@ -19,6 +19,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   beaconService : Ember.inject.service('beacon-service'),
   beaconViewService : Ember.inject.service('beacon-view-service'),
+  errorHandler : Ember.inject.service('error-handler'),
   localClusterDetails : {},
   initialize : function(){
     var localCluster = this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'));
@@ -40,65 +41,80 @@ export default Ember.Component.extend({
     return this.get('beaconService').registerCluster(name, clusterInfo);
   },
   getTargetClusterInfo(targetCluster){
-    var remoteClusterInfoDeferred = Ember.RSVP.defer();
-    if(!this.get('registeredClusters.entity').findBy('name', targetCluster.name)){
-      var ambariUrlLength = targetCluster.url.indexOf('api') - 1;
-      var remoteAmbariUrl = targetCluster.url.substr(0, ambariUrlLength);
-      return this.get('beaconViewService').getRemoteClusterInfo(remoteAmbariUrl,
+    var ambariUrlLength = targetCluster.url.indexOf('api') - 1;
+    var remoteAmbariUrl = targetCluster.url.substr(0, ambariUrlLength);
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconViewService').getRemoteClusterInfo(remoteAmbariUrl,
         {'userName': targetCluster.username,'password' : targetCluster.password}).done((clusterInfo)=>{
-          remoteClusterInfoDeferred.resolve(clusterInfo);
+          // TODO - TEMP fix for duplicate cluster names.
+          clusterInfo.name = targetCluster.name;
+          resolve(clusterInfo);
         }.bind(this)).fail(()=>{
-          remoteClusterInfoDeferred.resolve();
+          reject();
         });
-      }
-      return remoteClusterInfoDeferred.promise;
+      }.bind(this));
     },
     registerSourceCluster(){
-      var sourceClusterDeferred = Ember.RSVP.defer();
-      if(!this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'))){
-        this.set('statusMessage', 'Registering source cluster...');
-        this.registerCluster(this.get('localClusterDetails.name'), this.get('localClusterDetails')).done(()=>{
-          sourceClusterDeferred.resolve();
-        }.bind(this)).fail(()=>{
-          sourceClusterDeferred.reject();
-        });
-      }else{
-        sourceClusterDeferred.resolve();
-      }
-      return sourceClusterDeferred.promise;
-    },
-    registerTargetCluster(targetCluster){
-      var targetClusterDeferred = Ember.RSVP.defer();
-      this.getTargetClusterInfo(targetCluster).then((targetClusterInfo)=>{
-        targetClusterInfo.name = targetCluster.name;
-        this.set('currentTargetInfo', targetClusterInfo);
-        if(!this.get('registeredClusters.entity').findBy('name', targetCluster.name)){
-          this.set('statusMessage', 'Registering target cluster...');
-          this.registerCluster(targetCluster.name, this.extractRegistrationInfo(targetClusterInfo)).done(()=>{
-            targetClusterDeferred.resolve();
+      return new Ember.RSVP.Promise((resolve, reject) => {
+        if(!this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'))){
+          this.set('statusMessage', 'Registering source cluster...');
+          this.registerCluster(this.get('localClusterDetails.name'), this.get('localClusterDetails')).done(()=>{
+            resolve();
           }.bind(this)).fail(()=>{
-            targetClusterDeferred.reject();
+            reject();
           });
+        }else{
+          resolve();
         }
       }.bind(this));
-      return targetClusterDeferred.promise;
     },
-    pairClusters(){
-      var pairClustersDeferred = Ember.RSVP.defer();
-      this.get('beaconService').pairClusters(this.get('currentTargetInfo').name, this.get('currentTargetInfo').remoteBeaconEndpoint).done(()=>{
-        pairClustersDeferred.resolve();
-      }.bind(this)).fail(()=>{
-        pairClustersDeferred.reject();
-      });
-      return pairClustersDeferred.promise;
+    registerTargetCluster(targetClusterInfo){
+      return new Ember.RSVP.Promise((resolve, reject) => {
+          if(!this.get('registeredClusters.entity').findBy('name', targetClusterInfo.name)){
+            this.set('statusMessage', 'Registering target cluster...');
+            this.registerCluster(targetClusterInfo.name, this.extractRegistrationInfo(targetClusterInfo)).done(()=>{
+              resolve();
+            }.bind(this)).fail(()=>{
+              reject();
+            });
+          }else{
+            resolve();
+          }
+      }.bind(this));
+    },
+    pairClusters(targetClusterInfo){
+      return new Ember.RSVP.Promise((resolve, reject) => {
+        this.set('statusMessage', 'Pairing source and target clusters.');
+        this.get('beaconService').pairClusters(targetClusterInfo.name, targetClusterInfo.remoteBeaconEndpoint).done(()=>{
+          resolve();
+        }.bind(this)).fail(()=>{
+          reject();
+        });
+      }.bind(this));
     },
     actions : {
       pairCluster(index){
         var targetCluster = this.get('remoteClusters').objectAt(index);
         this.registerSourceCluster().then(()=>{
-          this.registerTargetCluster(targetCluster).then(()=>{
-            this.pairClusters();
+          this.getTargetClusterInfo(targetCluster).then((clusterInfo)=>{
+            this.registerTargetCluster(clusterInfo).then(()=>{
+              this.pairClusters(clusterInfo).then(()=>{
+                this.sendAction('refresh');
+              }).catch(()=>{
+                this.sendAction('onError', {message : 'Pairing of clusters failed.'});
+                this.sendAction('refresh');
+              }.bind(this));
+            }.bind(this)).catch(()=>{
+              this.sendAction('onError',{message : 'Registration of target cluster failed.'});
+              this.sendAction('refresh');
+            }.bind(this));
+          }.bind(this)).catch(()=>{
+            this.sendAction('onError', {message : 'Could not retrieve remote cluster details.'});
+            this.sendAction('refresh');
           }.bind(this));
+        }.bind(this)).catch(()=>{
+          this.sendAction('onError', {message : 'Registration of source cluster failed.'});
+          this.sendAction('refresh');
         }.bind(this));
       }
     }

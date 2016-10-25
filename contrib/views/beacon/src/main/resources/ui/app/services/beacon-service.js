@@ -48,8 +48,7 @@ export default Ember.Service.extend({
       dataType: 'json'
     });
   },
-  pairClusters(remoteClusterName, remoteBeaconEndpoint){
-    
+  pairClusters(remoteClusterName, remoteBeaconEndpoint){    
     var url = this.get('baseUrl') + '/pair';
     return Ember.$.ajax({
       type: "POST",

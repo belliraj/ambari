@@ -25,8 +25,8 @@ export default Ember.Route.extend({
   },
 
   afterModel(model){
-    model.currentCluster = this.modelFor('data-manager').currentCluster
-    model.registeredClusters = this.modelFor('data-manager').registeredClusters
+    model.currentCluster = this.modelFor('data-manager').currentCluster;
+    model.registeredClusters = this.modelFor('data-manager').registeredClusters;
   },
 
   model(){
@@ -38,15 +38,17 @@ export default Ember.Route.extend({
   },
 
   actions : {
-    registerClusters(clusters){
-      clusters.forEach((cluster)=>{
-        this.get('beaconService').registerCluster(cluster.name, cluster);
-      }, this);
-      this.controllerFor('data-manager.replication-setup').set('showClusterPopup', false);
-      Ember.getOwner(this).lookup('route:data-manager').refresh();
-    },
     setup(){
       this.controllerFor('data-manager.replication-setup').set('showClusterPopup', true);
+    },
+    refresh(){
+      Ember.getOwner(this).lookup('route:data-manager').model();
+    },
+    onError(error){
+      this.controllerFor('data-manager.replication-setup').set('error', error);
+    },
+    showStatus(status){
+      this.controllerFor('data-manager.replication-setup').set('status', status);
     }
   }
 });

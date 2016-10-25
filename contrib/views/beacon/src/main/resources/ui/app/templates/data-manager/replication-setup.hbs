@@ -16,6 +16,16 @@
 * limitations under the License.
 }}
 <div>
-  {{cluster-pairing-setup currentCluster=model.currentCluster remoteClusters=model.remoteClusters registeredClusters=model.registeredClusters}}
+  {{#if error}}
+  <div class="alert alert-danger">
+    {{error.message}}
+  </div>
+  {{/if}}
+  {{cluster-pairing-setup currentCluster=model.currentCluster remoteClusters=model.remoteClusters registeredClusters=model.registeredClusters refresh="refresh" onError="onError" showStatus="showStatus"}}
+  {{#if status}}
+    <div class="row loading-container status-bar">
+      <span>{{status.message}}</span>
+    </div>
+  {{/if}}
 </div>
 {{outlet}}
