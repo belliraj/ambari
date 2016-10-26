@@ -22,10 +22,10 @@
       {{#if model.showInitialLaunch}}
         {{#init-launch setup="setup"}}{{/init-launch}}
       {{else}}
-        <div class="col-xs-2">
+        <div class="col-xs-2 padding0">
           {{#left-nav-bar currentCluster=model.currentCluster registeredClusters=model.registeredClusters}}{{/left-nav-bar}}
         </div>
-        <div class="col-xs-10">
+        <div class="col-xs-10 padding0">
           {{outlet}}
         </div>
       {{/if}}

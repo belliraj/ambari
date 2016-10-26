@@ -17,7 +17,22 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  groupedClusters : Ember.computed('registeredClusters.entity.[]', function(){
+    var groupedClusters = Ember.A([]);
+    this.get('registeredClusters.entity').forEach((cluster) => {
+      var item = groupedClusters.findBy('colo', cluster.colo);
+      if(Ember.isEmpty(item)){
+        groupedClusters.pushObject({colo : cluster.colo, clusters : [cluster]});
+      }else{
+        item.clusters.pushObject(cluster);
+      }
+    });
+    return groupedClusters;
+  }),
+  onUpdate : function(){
+    this.$('.list-group .collapse').collapse('show');
+  }.on('didUpdate'),
   rendered : function(){
-
+      this.$('.list-group .collapse').collapse('show');
   }.on('didInsertElement')
 });

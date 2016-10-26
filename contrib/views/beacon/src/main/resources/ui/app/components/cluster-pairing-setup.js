@@ -50,13 +50,12 @@ export default Ember.Component.extend({
     return this.get('beaconService').registerCluster(name, clusterInfo);
   },
   getTargetClusterInfo(targetCluster){
+    this.set('statusMessage', 'Fetching remote cluster details...');
     var ambariUrlLength = targetCluster.url.indexOf('api') - 1;
     var remoteAmbariUrl = targetCluster.url.substr(0, ambariUrlLength);
     return new Ember.RSVP.Promise((resolve, reject) => {
       this.get('beaconViewService').getRemoteClusterInfo(remoteAmbariUrl,
         {'userName': targetCluster.username,'password' : targetCluster.password}).done((clusterInfo)=>{
-          // TODO - TEMP fix for duplicate cluster names.
-          clusterInfo.name = targetCluster.name;
           resolve(clusterInfo);
         }.bind(this)).fail(()=>{
           reject();
@@ -64,6 +63,7 @@ export default Ember.Component.extend({
       }.bind(this));
     },
     registerSourceCluster(){
+      this.set('statusMessage', 'Checking source cluster if is registered...');
       return new Ember.RSVP.Promise((resolve, reject) => {
         if(!this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'))){
           this.set('statusMessage', 'Registering source cluster...');
@@ -79,6 +79,7 @@ export default Ember.Component.extend({
       }.bind(this));
     },
     registerTargetCluster(targetClusterInfo){
+      this.set('statusMessage', 'Checking target cluster if is registered...');
       return new Ember.RSVP.Promise((resolve, reject) => {
           if(!this.get('registeredClusters.entity').findBy('name', targetClusterInfo.name)){
             this.set('statusMessage', 'Registering target cluster...');
@@ -95,6 +96,7 @@ export default Ember.Component.extend({
     },
     pairClusters(targetClusterInfo){
       return new Ember.RSVP.Promise((resolve, reject) => {
+        this.set('currentlyPaired', targetClusterInfo);
         this.set('statusMessage', 'Pairing source and target clusters.');
         this.get('beaconService').pairClusters(targetClusterInfo.name, targetClusterInfo.remoteBeaconEndpoint).done(()=>{
           this.set('statusMessage', 'Paired source and target clusters.');
@@ -104,27 +106,47 @@ export default Ember.Component.extend({
         });
       }.bind(this));
     },
+    disablePairingContainer(){
+      this.$('#remote-clusters-list').find('input').prop('disabled','disabled');
+      this.$('#remote-clusters-list').addClass('disabled-div');
+    },
+    enablePairingContainer(){
+      this.$('#remote-clusters-list').find('input').prop('disabled', false);
+      this.$('#remote-clusters-list').removeClass('disabled-div');
+    },
     actions : {
       pairCluster(index){
+        this.disablePairingContainer();
         var targetCluster = this.get('remoteClusters').objectAt(index);
         this.registerSourceCluster().then(()=>{
           this.getTargetClusterInfo(targetCluster).then((clusterInfo)=>{
+            // TODO - TEMP fix for duplicate cluster names-->
+            clusterInfo.name = targetCluster.name;
+            //---
+            clusterInfo.dataCenter = targetCluster.dataCenter;
             this.registerTargetCluster(clusterInfo).then(()=>{
               this.pairClusters(clusterInfo).then(()=>{
+                this.set('currentlyPaired', {});
+                this.enablePairingContainer();
                 this.sendAction('update');
               }).catch(()=>{
                 this.sendAction('onError', {message : 'Pairing of clusters failed.'});
+                this.set('currentlyPaired', {});
+                this.enablePairingContainer();
                 this.sendAction('update');
               }.bind(this));
             }.bind(this)).catch(() => {
+              this.enablePairingContainer();
               this.sendAction('onError',{message : 'Registration of target cluster failed.'});
               this.sendAction('update');
             }.bind(this));
           }.bind(this)).catch(() => {
+            this.enablePairingContainer();
             this.sendAction('onError', {message : 'Could not retrieve remote cluster details.'});
             this.sendAction('update');
           }.bind(this));
         }.bind(this)).catch(() => {
+          this.enablePairingContainer();
           this.sendAction('onError', {message : 'Registration of source cluster failed.'});
           this.sendAction('update');
         }.bind(this));

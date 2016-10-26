@@ -51,7 +51,7 @@
 						</div>
 						<div class="col-xs-6">
 							<label class="control-label smaller-font">DESTINATION CLUSTER</label>
-							<select class="form-control width-forty-percent" onchange={{action (mut policy.destination) value="target.value"}}>
+							<select class="form-control width-forty-percent" onchange={{action (mut policy.targetCluster) value="target.value"}}>
 								<option value="">Select</option>
 								{{#each pairedClusters as |cluster|}}
 								<option value="{{cluster.name}}">{{cluster.name}}</option>

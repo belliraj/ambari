@@ -15,13 +15,35 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
-<div class="navbar navbar-fixed-left">
-  <ul class="nav navbar-nav">
-    {{#each registeredClusters.entity as |cluster|}}
-      <li class="nav-list" class="{{if (eq currentCluster.name cluster.name) "active"}}"><a>{{cluster.name}}</a></li>
-    {{else}}
-      <li class="nav-list">Initializing...</li>
+<div class="left-nav-bar">
+  <div class="list-group list-group-root well">
+    <div class="list-group-item">
+      CLUSTER PAIRINGS
+      {{#link-to "data-manager.replication-setup" class="smaller-font"}}
+        <i class="fa fa-plus-square-o pull-right"></i>
+      {{/link-to}}
+    </div>
+    {{#each groupedClusters as |group|}}
+    <div data-target="#group-{{group.colo}}" class="list-group-item group-name" data-toggle="collapse">
+      {{#if (contains group.clusters currentCluster)}}
+        <i class="fa fa-check-circle-o" aria-hidden="true"></i>{{group.colo}}
+      {{else}}
+        {{group.colo}}
+      {{/if}}
+      <i class="fa fa-chevron-down pull-right" aria-hidden="true"></i>
+    </div>
+    <div class="list-group collapse" id="group-{{group.colo}}">
+      {{#each group.clusters as |cluster|}}
+      <a class="list-group-item">
+        {{#if (eq cluster.name currentCluster.name)}}
+          <i class="fa fa-check-circle-o" aria-hidden="true"></i>{{cluster.name}}
+        {{else}}
+          {{cluster.name}}
+        {{/if}}
+      </a>
+      {{/each}}
+    </div>
     {{/each}}
-  </ul>
+  </div>
 </div>
 {{yield}}

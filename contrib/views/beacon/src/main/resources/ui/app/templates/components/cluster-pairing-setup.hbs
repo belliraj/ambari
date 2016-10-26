@@ -58,7 +58,7 @@
         </div>
       </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container-fluid" id="remote-clusters-list">
       {{#each remoteClusters as |cluster index|}}
       <div class="row">
         <div class="col-xs-2">
@@ -73,28 +73,30 @@
         <div class="col-xs-2">
           <span class="smaller-font">PASSWORD</span>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
 
         </div>
       </div>
-      <div class="row">
+      <div class="row" id="cluster-{{index}}">
         <div class="col-xs-2">
           <span class="smaller-font">{{cluster.name}}</span>
         </div>
         <div class="col-xs-2">
-          {{input class="smaller-font" value= cluster.dataCenter}}
+          {{input class="smaller-font" value=cluster.dataCenter}}
         </div>
         <div class="col-xs-2">
-          {{input class="smaller-font" value= cluster.username}}
+          {{input class="smaller-font" value=cluster.username}}
         </div>
         <div class="col-xs-2">
           {{input type="password" class="smaller-font" value= cluster.password}}
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
           {{#if (contains sourceClusterPeers cluster)}}
-            <button type="button" class="smaller-font btn btn-success" name="button">Paired</button>
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRED</button>
+          {{else if (eq currentlyPaired.name cluster.name)}}
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRING</button>
           {{else}}
-            <button type="button" class="smaller-font btn btn-success" name="button" {{action 'pairCluster' index}}>Start Pairing</button>
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button" {{action 'pairCluster' index}}>START PAIRING</button>
           {{/if}}
         </div>
       </div>

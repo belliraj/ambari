@@ -20,7 +20,7 @@ export default Ember.Route.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   beaconService : Ember.inject.service('beacon-service'),
   redirect(model) {
-    if(this.get('router.url') != '/data-manager'){
+    if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
       return;
     }
     if(model.registeredClusters.totalResults > 1 && model.policies.totalResults >= 0){
@@ -48,7 +48,7 @@ export default Ember.Route.extend({
       this.transitionTo('data-manager.replication-setup');
     },
     didTransition(){
-      if(this.get('router.url') != '/data-manager'){
+      if(this.get('router.url') !== '/data-manager'){
         Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
       }
     }
