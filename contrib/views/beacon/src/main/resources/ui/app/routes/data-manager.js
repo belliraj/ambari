@@ -48,7 +48,7 @@ export default Ember.Route.extend({
       this.transitionTo('data-manager.replication-setup');
     },
     didTransition(){
-      if(this.get('router.url') !== '/data-manager'){
+      if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
         Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
       }
     }

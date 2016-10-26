@@ -25,6 +25,9 @@ export default Ember.Component.extend({
     return this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'));
   }),
   sourceClusterPeers : Ember.computed('sourceClusterRegistrationInfo.peers.@each.id', function(){
+    if(Ember.isEmpty(this.get('sourceClusterRegistrationInfo'))){
+      return [];
+    }
     return this.get('sourceClusterRegistrationInfo').peers;
   }),
   sourceRegistered : Ember.computed('sourceClusterRegistrationInfo', function(){

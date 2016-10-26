@@ -22,7 +22,11 @@ export default Ember.Route.extend({
   afterModel(model){
     var registeredCluster = this.modelFor('data-manager').registeredClusters.entity;
     model.currentCluster = registeredCluster.findBy('name',this.modelFor('data-manager').currentCluster.name);
-    model.pairedClusters = model.currentCluster.peers;
+    if(model.currentCluster){
+      model.pairedClusters = model.currentCluster.peers;
+    }else{
+      model.pairedClusters = [];
+    }
   },
   model(){
       return Ember.RSVP.hash({
