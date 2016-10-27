@@ -23,9 +23,14 @@ export default Ember.Service.extend({
     var url = this.get('baseUrl') + '/localClusterDetails';
     return Ember.$.get(url);
   },
-  getRemoteClusterInfo(ambariUrl){
+  getRemoteClusterInfo(ambariUrl, auth){
     var url = this.get('baseUrl') + '/remoteClusterDetails?ambariUrl=' + ambariUrl;
-    return Ember.$.get(url);
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      data: JSON.stringify(auth),
+      dataType: 'json'
+    });
   },
   getRemoteClusters(){
     var url = this.get('baseUrl') + '/listRemoteClusters';

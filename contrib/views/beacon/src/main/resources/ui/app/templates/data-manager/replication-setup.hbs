@@ -16,13 +16,11 @@
 * limitations under the License.
 }}
 <div>
-  {{#if (eq model.registeredClusters.totalResults 0)}}
-    {{#init-launch setup="setup"}}{{/init-launch}}
-  {{/if}}
-  <div class="row">
-    {{#if showClusterPopup}}
-      {{#cluster-initial-setup-dialog currentCluster=model.currentCluster remoteClusters=model.remoteClusters registerClusters="registerClusters"}}{{/cluster-initial-setup-dialog}}
-    {{/if}}
+  {{#if error}}
+  <div class="alert alert-danger">
+    {{error.message}}
   </div>
+  {{/if}}
+  {{cluster-pairing-setup currentCluster=model.currentCluster remoteClusters=model.remoteClusters registeredClusters=model.registeredClusters update="update" onError="onError" showStatus="showStatus"}}
 </div>
 {{outlet}}

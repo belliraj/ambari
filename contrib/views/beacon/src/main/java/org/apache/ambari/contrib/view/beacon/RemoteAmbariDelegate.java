@@ -18,6 +18,7 @@
 package org.apache.ambari.contrib.view.beacon;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -25,47 +26,71 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.ambari.view.ViewContext;
+import org.apache.ambari.view.utils.ambari.AmbariApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class RemoteAmbariDelegate extends BaseAmbariDelegate{
+public class RemoteAmbariDelegate extends BaseAmbariDelegate {
 
-	
 	private AmbariUtils ambariUtils;
+
 	public RemoteAmbariDelegate(ViewContext viewContext) {
 		super();
-		this.ambariUtils=new AmbariUtils(viewContext);
+		this.ambariUtils = new AmbariUtils(viewContext);
 	}
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(RemoteAmbariDelegate.class);
-	
+
 	private Utils utils = new Utils();
-	
+
 	private String getConfigurationData(final String url,
 			final String userName, final String password,
 			final String configurationType, final String tag) {
-		String configurationData = readFromRemoteCluster(url
-				+ getConfigurationPath(configurationType, tag), userName, password);
+		String configurationData = readFromRemoteCluster(url + "/"
+				+ getConfigurationPath(configurationType, tag), userName,
+				password);
 		return configurationData;
+	}
+
+	protected Map<String, String> getTagMap(JsonElement json) {
+		HashMap<String, String> tagMap = new HashMap<String, String>();
+		JsonObject desiredConfigs = json.getAsJsonObject().get("items")
+				.getAsJsonArray().get(0).getAsJsonObject().get("Clusters")
+				.getAsJsonObject().get("desired_configs").getAsJsonObject();
+		for (Map.Entry<String, JsonElement> entry : desiredConfigs.entrySet()) {
+			String tag = entry.getValue().getAsJsonObject().get("tag")
+					.getAsString();
+			tagMap.put(entry.getKey(), tag);
+		}
+		return tagMap;
 	}
 
 	public ClusterDetailInfo getRemoteClusterConfigurations(final String url,
 			final String userName, final String password,
 			String configurationTypes[]) {
-		Map<String, String> allDesiredTagMap = getAllDesiredTag(url, userName,
+		JsonElement json = readFromRemoteClusterAsJsonObject(url
+				+ AmbariApi.API_PREFIX + DESIRED_CONFIGS_PATH, userName,
 				password);
+		Map<String, String> allDesiredTagMap = getTagMap(json);
+		String clusterName = json.getAsJsonObject().get("items")
+				.getAsJsonArray().get(0).getAsJsonObject().get("Clusters")
+				.getAsJsonObject().get("cluster_name").getAsString();
+		final String remoteAmbariClusterUrl = url
+				+ AmbariApi.API_PREFIX + clusterName;
+
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		for (final String configurationType : configurationTypes) {
 			final String tag = allDesiredTagMap.get(configurationType);
 			Callable<String> callable = new Callable<String>() {
 				@Override
 				public String call() throws Exception {
-					return getConfigurationData(url, userName, password,
-							configurationType, tag);
+					return getConfigurationData(remoteAmbariClusterUrl,
+							userName, password, configurationType, tag);
 				}
 			};
 			Future<String> future = excutorPool.submit(callable);
@@ -73,6 +98,7 @@ public class RemoteAmbariDelegate extends BaseAmbariDelegate{
 		}
 		ClusterDetailInfo clusterDetails = new ClusterDetailInfo();
 		clusterDetails.setUrl(url);
+		clusterDetails.setName(clusterName);
 
 		for (int i = 0; i < futures.size(); i++) {
 			Future<String> result;
@@ -88,13 +114,6 @@ public class RemoteAmbariDelegate extends BaseAmbariDelegate{
 			}
 		}
 		return clusterDetails;
-	}
-
-	private Map<String, String> getAllDesiredTag(String clusterUrl,
-			String userName, String password) {
-		JsonElement json = readFromRemoteClusterAsJsonObject(clusterUrl
-				+ DESIRED_CONFIGS_PATH, userName, password);
-		return getTagMap(json);
 	}
 
 	private JsonElement readFromRemoteClusterAsJsonObject(String url,

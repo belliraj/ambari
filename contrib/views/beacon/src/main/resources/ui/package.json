@@ -19,7 +19,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "bower" : "1.7.1",
+    "bower": "1.7.1",
     "broccoli-asset-rev": "^2.4.2",
     "ember-ajax": "^2.0.1",
     "ember-cli": "2.8.0",
@@ -45,6 +45,7 @@
     "loader.js": "^4.0.1"
   },
   "dependencies": {
-    "ember-cli-mirage": "0.2.2"
+    "ember-cli-mirage": "0.2.2",
+    "ember-spin-spinner": "0.3.1"
   }
 }

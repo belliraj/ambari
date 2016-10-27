@@ -1,3 +1,4 @@
+import Ember from 'ember';
 /*
 *    Licensed to the Apache Software Foundation (ASF) under one or more
 *    contributor license agreements.  See the NOTICE file distributed with
@@ -14,28 +15,12 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
-import Resolver from './resolver';
-import loadInitializers from 'ember-load-initializers';
-import config from './config/environment';
+export function contains(params/*, hash*/) {
+  var arr = params[0];
+  var elt = params[1];
+  return !Ember.isEmpty(arr.findBy('name', elt.name));
+  //console.error(params);
+  //return params;
+}
 
-let App;
-
-Ember.MODEL_FACTORY_INJECTIONS = true;
-
-App = Ember.Application.extend({
-  modulePrefix: config.modulePrefix,
-  podModulePrefix: config.podModulePrefix,
-  Resolver
-});
-
-Ember.$.ajaxSetup({
-  beforeSend: function(xhr) {
-    xhr.setRequestHeader("X-Requested-By", 'Beacon-View');
-    xhr.setRequestHeader("Custom-Content-Type","application/json");
-  }
-});
-
-loadInitializers(App, config.modulePrefix);
-
-export default App;
+export default Ember.Helper.helper(contains);

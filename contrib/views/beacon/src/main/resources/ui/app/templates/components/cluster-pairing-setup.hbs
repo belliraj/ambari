@@ -1,0 +1,112 @@
+{{!
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+}}
+<div class="pairing-container">
+  PAIRING
+  <div class="">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <span class="navbar-brand">SOURCE CLUSTER</span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-2">
+          <span class="smaller-font">NAME</span>
+        </div>
+        <div class="col-xs-5">
+          <span class="smaller-font">DATA CENTER</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-2">
+          <span class="smaller-font">{{localClusterDetails.name}}</span>
+        </div>
+        {{#if sourceRegistered}}
+        <div class="col-xs-5">
+          <label class="smaller-font">{{localClusterDetails.colo}}</label>
+        </div>
+        {{else}}
+        <div class="col-xs-5">
+          {{input class="smaller-font" value= localClusterDetails.colo}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <span class="navbar-brand">REMOTE CLUSTERS</span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid" id="remote-clusters-list">
+      {{#each remoteClusters as |cluster index|}}
+      <div class="row">
+        <div class="col-xs-2">
+          <span class="smaller-font">NAME</span>
+        </div>
+        <div class="col-xs-2">
+          <span class="smaller-font">DATA CENTER</span>
+        </div>
+        <div class="col-xs-2">
+          <span class="smaller-font">USER NAME</span>
+        </div>
+        <div class="col-xs-2">
+          <span class="smaller-font">PASSWORD</span>
+        </div>
+        <div class="col-xs-3">
+
+        </div>
+      </div>
+      <div class="row" id="cluster-{{index}}">
+        <div class="col-xs-2">
+          <span class="smaller-font">{{cluster.name}}</span>
+        </div>
+        <div class="col-xs-2">
+          {{input class="smaller-font" value=cluster.dataCenter}}
+        </div>
+        <div class="col-xs-2">
+          {{input class="smaller-font" value=cluster.username}}
+        </div>
+        <div class="col-xs-2">
+          {{input type="password" class="smaller-font" value= cluster.password}}
+        </div>
+        <div class="col-xs-3">
+          {{#if (contains sourceClusterPeers cluster)}}
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRED</button>
+          {{else if (eq currentlyPaired.name cluster.name)}}
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRING</button>
+          {{else}}
+            <button type="button" class="smaller-font btn btn-success btn-xs" name="button" {{action 'pairCluster' index}}>START PAIRING</button>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+      {{#if statusMessage}}
+        <div class="row status-bar">
+          <span class="smaller-font">{{statusMessage}}</span>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{yield}}

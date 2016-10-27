@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
@@ -57,7 +58,7 @@ public class BeaconProxyService {
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
 	// private static final String DEFAULT_SERVICE_URI =
 	// "http://sandbox.hortonworks.com:25000/beacon";
-	private static final String DEFAULT_SERVICE_URI = "http://localhost:8090";
+	private static final String DEFAULT_SERVICE_URI = "http://192.168.56.1:8090";
 	private Utils utils = new Utils();
 	private AmbariUtils ambariUtils;
 	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();
@@ -70,8 +71,6 @@ public class BeaconProxyService {
 
 	@GET
 	@Path("/{path: .*}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN,
-			MediaType.TEXT_HTML, MediaType.APPLICATION_XML })
 	public Response handleGet(@Context HttpHeaders headers, @Context UriInfo ui) {
 		try {
 			String serviceURI = buildURI(ui);
@@ -86,8 +85,6 @@ public class BeaconProxyService {
 
 	@POST
 	@Path("/{path: .*}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN,
-			MediaType.TEXT_HTML, MediaType.APPLICATION_XML })
 	public Response handlePost(String xml, @Context HttpHeaders headers,
 			@Context UriInfo ui) {
 		try {
@@ -102,8 +99,6 @@ public class BeaconProxyService {
 
 	@DELETE
 	@Path("/{path: .*}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN,
-			MediaType.TEXT_HTML, MediaType.APPLICATION_XML })
 	public Response handleDelete(@Context HttpHeaders headers,
 			@Context UriInfo ui) {
 		try {
@@ -118,8 +113,6 @@ public class BeaconProxyService {
 
 	@PUT
 	@Path("/{path: .*}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN,
-			MediaType.TEXT_HTML, MediaType.APPLICATION_XML })
 	public Response handlePut(String body, @Context HttpHeaders headers,
 			@Context UriInfo ui) {
 

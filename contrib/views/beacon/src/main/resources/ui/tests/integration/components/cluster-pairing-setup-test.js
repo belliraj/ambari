@@ -14,28 +14,27 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
-import Resolver from './resolver';
-import loadInitializers from 'ember-load-initializers';
-import config from './config/environment';
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
 
-let App;
-
-Ember.MODEL_FACTORY_INJECTIONS = true;
-
-App = Ember.Application.extend({
-  modulePrefix: config.modulePrefix,
-  podModulePrefix: config.podModulePrefix,
-  Resolver
+moduleForComponent('cluster-pairing-setup', 'Integration | Component | cluster pairing setup', {
+  integration: true
 });
 
-Ember.$.ajaxSetup({
-  beforeSend: function(xhr) {
-    xhr.setRequestHeader("X-Requested-By", 'Beacon-View');
-    xhr.setRequestHeader("Custom-Content-Type","application/json");
-  }
+test('it renders', function(assert) {
+  // Set any properties with this.set('myProperty', 'value');
+  // Handle any actions with this.on('myAction', function(val) { ... });
+
+  this.render(hbs`{{cluster-pairing-setup}}`);
+
+  assert.equal(this.$().text().trim(), '');
+
+  // Template block usage:
+  this.render(hbs`
+    {{#cluster-pairing-setup}}
+      template block text
+    {{/cluster-pairing-setup}}
+  `);
+
+  assert.equal(this.$().text().trim(), 'template block text');
 });
-
-loadInitializers(App, config.modulePrefix);
-
-export default App;

@@ -20,14 +20,16 @@ export default Ember.Route.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   beaconService : Ember.inject.service('beacon-service'),
   redirect(model) {
-    if(model.registeredClusters.totalResults > 0 && model.policies.length >= 0){
+    if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
+      return;
+    }
+    if(model.registeredClusters.totalResults > 1 && model.policies.totalResults >= 0){
       this.transitionTo('data-manager.replication-policies');
     } else {
-      this.transitionTo('data-manager.replication-setup');
+      model.showInitialLaunch = true;
     }
   },
   model(){
-    var deferred = Ember.RSVP.defer();
     var clusterRegisteredPromise = this.get('beaconService').getRegisteredClusters();
     var policiesPromise = this.get('beaconService').getPolicies();
     var currentClusterPromise = this.get('beaconViewService').getLocalClusterInfo();
@@ -36,12 +38,19 @@ export default Ember.Route.extend({
       policies : policiesPromise,
       currentCluster : currentClusterPromise
     });
-    // deferred.resolve(promise);
-    // return deferred.promise;
   },
   actions : {
     goToHomePage(){
       this.refresh();
+    },
+    setup(){
+      Ember.set(this.modelFor('data-manager'),'showInitialLaunch', false);
+      this.transitionTo('data-manager.replication-setup');
+    },
+    didTransition(){
+      if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
+        Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
+      }
     }
   }
 });

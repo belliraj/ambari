@@ -20,6 +20,7 @@ import com.google.gson.JsonParser;
 
 public class AmbariUtils {
 
+	private static final String PROXY_CONTENT_TYPE = "Custom-Content-Type";
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(AmbariUtils.class);
 	private ViewContext viewContext;
@@ -57,6 +58,10 @@ public class AmbariUtils {
 		LOGGER.info(String.format("Proxy request for url: [%s] %s", method,
 				urlToRead));
 		Map<String, String> mergedHeaders = utils.getHeaders(headers);
+		if (mergedHeaders!=null && mergedHeaders.containsKey(PROXY_CONTENT_TYPE)){
+			mergedHeaders.put("Content-Type", mergedHeaders.get(PROXY_CONTENT_TYPE));
+			mergedHeaders.remove(PROXY_CONTENT_TYPE);
+		}
 		if (customHeaders != null) {
 			mergedHeaders.putAll(customHeaders);
 		}

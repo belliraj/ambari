@@ -21,7 +21,7 @@ export default Ember.Component.extend({
     this.set('selectionType', 'all');
     this.set('policy', {});
     this.set('policy.frequencyInSec', 86400);
-    this.set('policy.type', 'HIVE')
+    this.set('policy.type', 'HIVE');
     this.set('policy.sourceCluster', this.get('currentCluster.name'));
   }.on('init'),
   actions : {
@@ -38,6 +38,12 @@ export default Ember.Component.extend({
       }else if(type === 'monthly'){
         this.set('policy.frequencyInSec', 2628000);
       }
+    },
+    previous(){
+      this.$('#create-policy').find('.active').prev('li').find('a[data-toggle="tab"]').tab('show');
+    },
+    next(){
+      this.$('#create-policy').find('.active').next('li').find('a[data-toggle="tab"]').tab('show');
     }
   }
 });

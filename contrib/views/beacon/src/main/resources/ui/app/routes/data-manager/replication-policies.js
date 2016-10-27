@@ -20,17 +20,18 @@ export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
 
   afterModel(model){
-    var registeredCluster = this.modelFor('data-manager').registeredClusters;
-    var pairedClusterNames = this.modelFor('data-manager').currentCluster.peers;
-    var pairedClusters = [];
-    pairedClusterNames.forEach((name)=>{
-      pairedClusters.push(registeredCluster.findBy('name',name));
-    });
-    model.pairedClusters = pairedClusters;
+    var registeredCluster = this.modelFor('data-manager').registeredClusters.entity;
+    model.currentCluster = registeredCluster.findBy('name',this.modelFor('data-manager').currentCluster.name);
+    if(model.currentCluster){
+      model.pairedClusters = model.currentCluster.peers;
+    }else{
+      model.pairedClusters = [];
+    }
   },
-
   model(){
-    return this.modelFor('data-manager');
+      return Ember.RSVP.hash({
+         policies : this.get('beaconService').getPolicies()
+      });
   },
   setupController: function(controller, model) {
     this._super(controller, model);
@@ -40,8 +41,11 @@ export default Ember.Route.extend({
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
     },
     savePolicy(policy){
-      this.get('beaconService').createPolicy(policy);
-      Ember.getOwner(this).lookup('route:data-manager').refresh();
+      this.get('beaconService').createPolicy(policy).done(()=>{
+        this.refresh();
+      }).fail(()=>{
+        console.error("Policy creation failed");
+      });
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
     }
   }

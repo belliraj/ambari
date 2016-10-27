@@ -18,6 +18,7 @@
 package org.apache.ambari.contrib.view.beacon;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -37,6 +38,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class AmbariDelegate extends BaseAmbariDelegate {
+	
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(AmbariDelegate.class);
 	private static final String VIEW_NAME = "beacon-view";
@@ -79,6 +81,18 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 		String configurationData = requestClusterAPI(getConfigurationPath(
 				configurationType, tag),headers);
 		return configurationData;
+	}
+	
+	protected Map<String, String> getTagMap(JsonElement json) {
+		HashMap<String, String> tagMap = new HashMap<String, String>();
+		JsonObject desiredConfigs = json.getAsJsonObject().get("Clusters")
+				.getAsJsonObject().get("desired_configs").getAsJsonObject();
+		for (Map.Entry<String, JsonElement> entry : desiredConfigs.entrySet()) {
+			String tag = entry.getValue().getAsJsonObject().get("tag")
+					.getAsString();
+			tagMap.put(entry.getKey(), tag);
+		}
+		return tagMap;
 	}
 
 	public ClusterDetailInfo getLocalClusterDetail(String configurationTypes[],final Map<String, String> headers) {
@@ -137,15 +151,6 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 
 	}
 
-	private String requestClusterAPIv2(String path, Map<String, String> headers) {
-		if(headers.get("Accept-Encoding") != null){
-			headers.remove("Accept-Encoding");
-		}
-		return readFromAmbari(AmbariApi.API_PREFIX
-				+ viewContext.getCluster().getName() + "/" + path, "GET", null,
-				headers);
-	}
-
 	private String requestClusterAPIv1(String path) {
 		try {
 			String resp = this.ambariApi.requestClusterAPI(path);
@@ -164,12 +169,21 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 		String resp = readFromAmbari(path, method, data, headers);
 		return new JsonParser().parse(resp);
 	}
+	
+	private String requestClusterAPIv2(String path, Map<String, String> headers) {
+		if(headers.get("Accept-Encoding") != null){
+			headers.remove("Accept-Encoding");
+		}
+		return readFromAmbari(AmbariApi.API_PREFIX
+				+ viewContext.getCluster().getName() + "/" + path, "GET", null,
+				headers);
+	}
 
 	private String readFromAmbari(String path, String method, String data,
 			Map<String, String> headers) {
 		try {
 			if (!path.startsWith("/api")) {
-				path = "/api/v1/" + path;
+				path = API_PREFIX +"/"+ path;
 			}
 			String resp = this.ambariApi.readFromAmbari(path, method, data,
 					headers);

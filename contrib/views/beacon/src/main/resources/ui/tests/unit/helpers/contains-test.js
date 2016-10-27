@@ -14,28 +14,13 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
-import Resolver from './resolver';
-import loadInitializers from 'ember-load-initializers';
-import config from './config/environment';
+import { contains } from 'data-manager/helpers/contains';
+import { module, test } from 'qunit';
 
-let App;
+module('Unit | Helper | contains');
 
-Ember.MODEL_FACTORY_INJECTIONS = true;
-
-App = Ember.Application.extend({
-  modulePrefix: config.modulePrefix,
-  podModulePrefix: config.podModulePrefix,
-  Resolver
+// Replace this with your real tests.
+test('it works', function(assert) {
+  let result = contains([42]);
+  assert.ok(result);
 });
-
-Ember.$.ajaxSetup({
-  beforeSend: function(xhr) {
-    xhr.setRequestHeader("X-Requested-By", 'Beacon-View');
-    xhr.setRequestHeader("Custom-Content-Type","application/json");
-  }
-});
-
-loadInitializers(App, config.modulePrefix);
-
-export default App;

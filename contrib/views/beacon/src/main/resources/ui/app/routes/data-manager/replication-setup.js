@@ -25,25 +25,36 @@ export default Ember.Route.extend({
   },
 
   afterModel(model){
-    model.currentCluster = this.modelFor('data-manager').currentCluster
-    model.registeredClusters = this.modelFor('data-manager').registeredClusters
+    model.currentCluster = this.modelFor('data-manager').currentCluster;
+    model.registeredClusters = this.modelFor('data-manager').registeredClusters;
   },
 
   model(){
     var currentCluster = this.modelFor('data-manager').currentCluster;
-    return this.get('beaconViewService').getRemoteClusters();
+    var remoteClustersPromise = this.get('beaconViewService').getRemoteClusters();
+    return Ember.RSVP.hash({
+      remoteClusters : remoteClustersPromise,
+    });
   },
 
   actions : {
-    registerClusters(clusters){
-      clusters.forEach((cluster)=>{
-        this.get('beaconService').registerCluster(cluster.name, cluster);
-      }, this);
-      this.controllerFor('data-manager.replication-setup').set('showClusterPopup', false);
-      Ember.getOwner(this).lookup('route:data-manager').refresh();
-    },
     setup(){
       this.controllerFor('data-manager.replication-setup').set('showClusterPopup', true);
+    },
+    refresh(){
+      Ember.getOwner(this).lookup('route:data-manager').refresh();
+    },
+    onError(error){
+      this.controllerFor('data-manager.replication-setup').set('error', error);
+    },
+    showStatus(status){
+      this.controllerFor('data-manager.replication-setup').set('status', status);
+    },
+    update(){
+      this.get('beaconService').getRegisteredClusters().done((registeredClusters) => {
+        this.controllerFor('data-manager.replication-setup').set('model.registeredClusters', registeredClusters);
+        Ember.getOwner(this).lookup('route:data-manager').controller.set('model.registeredClusters', registeredClusters);
+      }.bind(this));
     }
   }
 });
