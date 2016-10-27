@@ -108,7 +108,7 @@ public class BeaconProxyService {
 			@Context UriInfo ui) {
 		try {
 			String serviceURI = buildURI(ui);
-			return consumeService(headers, serviceURI, HttpMethod.POST, null);
+			return consumeService(headers, serviceURI, HttpMethod.DELETE, null);
 		} catch (Exception ex) {
 			LOGGER.error("Error in DELETE proxy", ex);
 			return Response.status(Response.Status.BAD_REQUEST)
