@@ -1,11 +1,14 @@
 <div id="wrapper">
+  {{#if (gt model.registeredClusters.totalResults 1)}}
   <div class="container-fluid" role="navigation">
     <!--div class="navbar-header">
       <a class="navbar-brand" href="javascript:void(0)" {{action 'goToHomePage'}}>Data Manager</a>
     </div-->
     <ul class="nav navbar-nav navbar-right navbar-custom">
       <li>
-        <a href="" class="smaller-font"><i class="fa fa-tasks pr5 navbar-icons"></i>MONITOR JOBS</a>
+        {{#link-to "data-manager.monitor" class="smaller-font"}}
+          <a href="" class="smaller-font"><i class="fa fa-tasks pr5 navbar-icons"></i>MONITOR JOBS</a>
+        {{/link-to}}
       </li>
       <li>
         {{#link-to "data-manager.replication-policies" class="smaller-font"}}
@@ -13,10 +16,13 @@
         {{/link-to}}
       </li>
       <li>
-        <a href="" class="smaller-font"><i class="fa fa-object-ungroup pr5 navbar-icons"></i>INCOMING POLICIES</a>
+        {{#link-to "data-manager.incoming-policies" class="smaller-font"}}
+          <a href="" class="smaller-font"><i class="fa fa-object-ungroup pr5 navbar-icons"></i>INCOMING POLICIES</a>
+        {{/link-to}}
       </li>
     </ul>
   </div>
+  {{/if}}
   <div id="page-wrapper">
     <div>
       {{#if model.showInitialLaunch}}

@@ -20,6 +20,7 @@ import Ember from 'ember';
 export default Ember.Object.create({
   MOCK_INFO : {
     isRegisteredInBeacon : false,
-    localCluster : 'secondaryCluster'
+    localCluster : 'secondaryCluster',
+    hiveDatabases : [{name : 'Test1'}, {name : 'Test2'}, {name :'Test-3'}, {name :'Test-4'}]
   }
 });

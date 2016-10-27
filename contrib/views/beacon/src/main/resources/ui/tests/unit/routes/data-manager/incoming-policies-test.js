@@ -14,23 +14,14 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
-import config from './config/environment';
+import { moduleFor, test } from 'ember-qunit';
 
-const Router = Ember.Router.extend({
-  location: config.locationType,
-  rootURL: config.rootURL
+moduleFor('route:data-manager/incoming-policies', 'Unit | Route | data manager/incoming policies', {
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
 });
 
-Router.map(function() {
-  //this.route('index');
-  this.route('data-manager', function() {
-    this.route('setup');
-    this.route('monitor');
-    this.route('replication-setup');
-    this.route('replication-policies');
-    this.route('incoming-policies');
-  });
+test('it exists', function(assert) {
+  let route = this.subject();
+  assert.ok(route);
 });
-
-export default Router;

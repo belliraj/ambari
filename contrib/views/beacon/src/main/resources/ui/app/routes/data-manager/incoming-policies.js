@@ -15,22 +15,16 @@
 *    limitations under the License.
 */
 import Ember from 'ember';
-import config from './config/environment';
 
-const Router = Ember.Router.extend({
-  location: config.locationType,
-  rootURL: config.rootURL
+export default Ember.Route.extend({
+  beaconService : Ember.inject.service('beacon-service'),
+
+  model(){
+      return Ember.RSVP.hash({
+         policies : this.get('beaconService').getIncomingPolicies()
+      });
+  },
+  setupController: function(controller, model) {
+    this._super(controller, model);
+  }
 });
-
-Router.map(function() {
-  //this.route('index');
-  this.route('data-manager', function() {
-    this.route('setup');
-    this.route('monitor');
-    this.route('replication-setup');
-    this.route('replication-policies');
-    this.route('incoming-policies');
-  });
-});
-
-export default Router;

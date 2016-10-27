@@ -47,6 +47,34 @@ export default Ember.Route.extend({
         console.error("Policy creation failed");
       });
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
+    },
+    schedule(name) {
+      this.get('beaconService').schedulePolicy(name).done(()=>{
+        this.refresh();
+      }).fail(()=>{
+        console.error("Policy suspend - failed");
+      });
+    },
+    suspend(name) {
+      this.get('beaconService').suspendPolicy(name).done(()=>{
+        this.refresh();
+      }).fail(()=>{
+        console.error("Policy suspend - failed");
+      });
+    },
+    resume(name) {
+      this.get('beaconService').resumePolicy(name).done(()=>{
+        this.refresh();
+      }).fail(()=>{
+        console.error("Policy resume - failed");
+      });
+    },
+    delete(name) {
+      this.get('beaconService').deletePolicy(name).done(()=>{
+        this.refresh();
+      }).fail(()=>{
+        console.error("Policy delete - failed");
+      });
     }
   }
 });

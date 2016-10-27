@@ -64,12 +64,21 @@
 							<label class="control-label smaller-font">ENTER PATH OR SELECT DATABASES</label>
 							<div>
 								<label class="radio-inline">
-									<input type="radio" name="databaseSelectionType" value='all' checked={{if (eq selectionType 'all') 'checked'}} onchange={{action (mut selectionType) value="target.value"}}>All
+									<input type="radio" name="databaseSelectionType" value='all' checked={{if (eq selectionType 'all') 'checked'}} onchange={{action 'onDBSelect' 'all'}}>All
 								</label>
 								<label class="radio-inline">
-									<input type="radio" name="databaseSelectionType" value='selected' checked={{if (eq selectionType 'selected') 'checked'}} onchange={{action (mut selectionType) value="target.value"}}>Selection
+									<input type="radio" name="databaseSelectionType" value='selected' checked={{if (eq selectionType 'selected') 'checked'}} onchange={{action 'onDBSelect' 'selected'}}>Selection
 								</label>
 							</div>
+								{{#if (eq selectionType 'selected')}}
+								<div class="panel panel-body">
+									{{#each hiveDatabases as |database|}}
+									<div class="">
+										<input type="checkbox" name="db-name" value={{database.name}}> &nbsp; {{database.name}}
+									</div>
+									{{/each}}
+								</div>
+								{{/if}}
 						</div>
 					</div>
 					<div class="row">
@@ -130,13 +139,13 @@
 		<div role="tabpanel" class="tab-pane review-tab" id="reviewTab">
 			<div class="panel panel-default">
 				<div class="panel-body">
-					Data replication process for data selected from cluster *** using replication policy *** will be started.<br /><br />
+					Data replication process for data selected from cluster {{policy.name}} will be started.<br /><br />
 
 					Transfer Details:<br />
 					Total Data Volume:<br />
 					Transfer Time:<br />
 					Files:<br />
-					Destination:<br />
+					Destination: {{policy.destination}}
 
 					<i class="fa fa-exclamation-circle pr5"></i>The first run of the replication policy may take additional time.
 				</div>

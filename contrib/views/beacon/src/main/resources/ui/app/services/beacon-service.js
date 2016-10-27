@@ -39,6 +39,10 @@ export default Ember.Service.extend({
     var url = this.get('baseUrl') + '/policy/list';
     return Ember.$.get(url);
   },
+  getIncomingPolicies(){
+    var url = this.get('baseUrl') + '/policy/incoming/list';
+    return Ember.$.get(url);
+  },
   createPolicy(policy){
     var url = this.get('baseUrl') + '/policy/submit/' + policy.name;
     return Ember.$.ajax({
@@ -48,7 +52,39 @@ export default Ember.Service.extend({
       dataType: 'json'
     });
   },
-  pairClusters(remoteClusterName, remoteBeaconEndpoint){    
+  schedulePolicy(policyName){
+    var url = this.get('baseUrl') + '/policy/schedule/' + policyName;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      dataType: 'json'
+    });
+  },
+  suspendPolicy(policyName){
+    var url = this.get('baseUrl') + '/policy/suspend/' + policyName;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      dataType: 'json'
+    });
+  },
+  resumePolicy(policyName){
+    var url = this.get('baseUrl') + '/policy/resume/' + policyName;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      dataType: 'json'
+    });
+  },
+  deletePolicy(policyName){
+    var url = this.get('baseUrl') + '/policy/delete/' + policyName;
+    return Ember.$.ajax({
+      type: "POST",
+      url: url,
+      dataType: 'json'
+    });
+  },
+  pairClusters(remoteClusterName, remoteBeaconEndpoint){
     var url = this.get('baseUrl') + '/pair';
     return Ember.$.ajax({
       type: "POST",

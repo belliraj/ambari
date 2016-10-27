@@ -15,10 +15,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
-{{#if (and (gt model.policies.totalResults 0)(not createPolicyShown))}}
-<div id="replicationPolicies">
+<div id="incomingPolicies">
   <div class="clearfix">
-    <div class="replication-policies-title pull-left ">Replication Policies</div>
+    <div class="replication-policies-title pull-left ">Incoming Policies</div>
     <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
   </div>
 
@@ -45,29 +44,11 @@
         <td>{{policy.runTime}}</td>
         <td>{{policy.type}}</td>
         <td>{{policy.targetCluster}}</td>
-        <td>
-          <div class="btn-group">
-            <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-            <ul class="dropdown-menu">
-              <li {{action 'schedule' policy.name}}><a>Run Now</a></li>
-              <li {{action 'suspend' policy.name}}><a>Suspend</a></li>
-              <li {{action 'resume' policy.name}}><a>Resume</a></li>
-              <li role="separator" class="divider"></li>
-              <li {{action 'delete' policy.name}}><a>Delete</a></li>
-            </ul>
-          </div>
+        <td><i class="fa fa-ellipsis-v" aria-hidden="true" aria-expanded="false"></i>
         </td>
       </tr>
       {{/each}}
     </tbody>
   </table>
 </div>
-{{else if (not createPolicyShown)}}
-<div class="no-replication-policy">
-  <span>No replication policies created.<br/>Create first replication policy.</span>
-  <button type="button" class="btn btn-success" name="button" {{action 'createPolicy'}}>CREATE REPLICATION POLICY</button>
-</div>
-{{/if}}
-{{#if createPolicyShown}}
-{{#create-replication-policy currentCluster=model.currentCluster pairedClusters=model.pairedClusters savePolicy="savePolicy"}}{{/create-replication-policy}}
-{{/if}}
+{{outlet}}
