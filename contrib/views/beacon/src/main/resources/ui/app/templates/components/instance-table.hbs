@@ -1,0 +1,87 @@
+{{!
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+}}
+{{#if showLastRuns}}
+  <table id="instances-list" class="table listing table-striped table-hover instances-list" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>LAST RUN STATUS</th>
+        <th>POLICY NAME</th>
+        <th>LAST RUN</th>
+        <th>SERVICE</th>
+        <th>TRANSFERRED</th>
+        <th>DESTINATION</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each lastRuns as |instance|}}
+      <tr>
+        <td class="{{instance.status}}">{{instance.status}}</td>
+        <td>{{instance.policy.name}}</td>
+        <td>{{instance.lastRun}}</td>
+        <td>{{instance.policy.type}}</td>
+        <td>{{instance.runTime}}</td>
+        <td>{{instance.policy.targetCluster}}</td>
+        <td>
+          <div class="btn-group action-ellipsis">
+            <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+              <li {{action 'viewPreviousRuns' instance.policy.name}}><a>View Prev Runs</a></li>
+              <li><a>Start Failback</a></li>
+              <li><a>Deactivate Policy</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a>Remove Policy</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+{{#if showPreviousRuns}}
+  <div class="mt10">
+    <span>Policy Name : {{selectedPolicy}}</span>
+    <button type="button" class="btn btn-default btn-xs pull-right" name="button" {{action "backToInstances"}}>
+      <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp; BACK TO INSTANCE LIST
+    </button>
+    <table id="instances-list" class="table listing table-striped table-hover instances-list" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>STATUS</th>
+          <th>POLICY NAME</th>
+          <th>SERVICE</th>
+          <th>TRANSFERRED</th>
+          <th>DESTINATION</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each previousRuns as |instance|}}
+          <tr>
+            <td class="{{instance.status}}">{{instance.status}}</td>
+            <td>{{instance.policy.name}}</td>
+            <td>{{instance.policy.type}}</td>
+            <td>{{instance.runTime}}</td>
+            <td>{{instance.policy.targetCluster}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+{{/if}}
+{{yield}}

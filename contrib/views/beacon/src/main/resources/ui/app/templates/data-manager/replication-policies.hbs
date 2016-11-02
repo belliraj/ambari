@@ -38,7 +38,7 @@
     <tbody>
       {{#each model.policies.entity as |policy|}}
       <tr>
-        <td>{{policy.status}}</td>
+        <td class="{{policy.status}}">{{policy.status}}</td>
         <td>{{policy.name}}</td>
         <td>{{policy.lastRun}}</td>
         <td>{{policy.schedule}}</td>
@@ -46,12 +46,12 @@
         <td>{{policy.type}}</td>
         <td>{{policy.targetCluster}}</td>
         <td>
-          <div class="btn-group">
+          <div class="btn-group action-ellipsis">
             <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
             <ul class="dropdown-menu">
-              <li {{action 'schedule' policy.name}}><a>Run Now</a></li>
-              <li {{action 'suspend' policy.name}}><a>Suspend</a></li>
-              <li {{action 'resume' policy.name}}><a>Resume</a></li>
+              <li {{action 'schedule' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Run Now</a></li>
+              <li {{action 'suspend' policy.name}} class='{{if (or (eq policy.status "SUBMITTED")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Suspend</a></li>
+              <li {{action 'resume' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUBMITTED")) "disabled-elt"}}'><a>Resume</a></li>
               <li role="separator" class="divider"></li>
               <li {{action 'delete' policy.name}}><a>Delete</a></li>
             </ul>

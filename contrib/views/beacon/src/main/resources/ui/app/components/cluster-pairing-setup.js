@@ -111,11 +111,11 @@ export default Ember.Component.extend({
     },
     disablePairingContainer(){
       this.$('#remote-clusters-list').find('input').prop('disabled','disabled');
-      this.$('#remote-clusters-list').addClass('disabled-div');
+      this.$('#remote-clusters-list').addClass('disabled-elt');
     },
     enablePairingContainer(){
       this.$('#remote-clusters-list').find('input').prop('disabled', false);
-      this.$('#remote-clusters-list').removeClass('disabled-div');
+      this.$('#remote-clusters-list').removeClass('disabled-elt');
     },
     actions : {
       pairCluster(index){

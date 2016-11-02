@@ -14,13 +14,27 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
 
-export default Ember.Route.extend({
-  beaconService : Ember.inject.service('beacon-service'),
-  model() {
-    return Ember.RSVP.hash({
-      instances : this.get('beaconService').getAllInstances()
-    });
-  }
+moduleForComponent('instance-table', 'Integration | Component | instance table', {
+  integration: true
+});
+
+test('it renders', function(assert) {
+  // Set any properties with this.set('myProperty', 'value');
+  // Handle any actions with this.on('myAction', function(val) { ... });
+
+  this.render(hbs`{{instance-table}}`);
+
+  assert.equal(this.$().text().trim(), '');
+
+  // Template block usage:
+  this.render(hbs`
+    {{#instance-table}}
+      template block text
+    {{/instance-table}}
+  `);
+
+  assert.equal(this.$().text().trim(), 'template block text');
 });

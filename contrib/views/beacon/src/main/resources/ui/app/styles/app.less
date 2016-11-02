@@ -14,23 +14,49 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
+
+@common-background: #fff;
+@list-background : #f9f9f9;
+@success-color : #5cb85c;
+@primary-color : #337ab7;
+@default-color : #e6e6e6;
+@info-color : #31b0d5;
+@warning-color : #f0ad4e;
+@danger-color : #d9534f;
+
 .padding0 {
 	padding: 0px;
 }
+.mt10 {
+	margin-top: 10px;
+}
+
+.RUNNING {
+	color: @success-color;
+}
+
+.SUSPENDED {
+	color: @warning-color;
+}
+
+.COMPLETED {
+	color: @primary-color;
+}
+
 body {
 	background-color: #eee;
 }
 
 .container-fluid {
-	background-color: #fff;
+	background-color: @common-background;
 }
 
-#page-wrapper, #replicationPolicies {
+#page-wrapper, #replicationPolicies, #monitoring-dashboard {
 	padding: 20px;
 }
 
 .navbar-default {
-	background-color: #fff;
+	background-color: @common-background;
 }
 
 .navbar-nav .active {
@@ -48,7 +74,7 @@ body {
 }
 
 .data-manager-panels .panel-heading, .data-manager-panels .panel-footer {
-	background-color: #fff;
+	background-color: @common-background;
 	border: none;
 }
 
@@ -166,7 +192,7 @@ body {
 }
 
 .replication-policies-list {
-	background-color: #f9f9f9;
+	background-color: @list-background;
 	border: 1px solid #ccc;
 	margin-top: 10px;
 }
@@ -180,24 +206,34 @@ body {
 	font-weight: bold;
 }
 
-.data-manager-panels .fa-question-circle-o {
-	color: #337ab7;
+.instances-list {
+	background-color: @list-background;
+	border: 1px solid #ccc;
+	margin-top: 10px;
 }
 
-.disabled-div {
+.instances-list>thead>tr>th {
+	border-bottom: 1px;
+}
+
+.data-manager-panels .fa-question-circle-o {
+	color: @primary-color;
+}
+
+.disabled-elt {
 	pointer-events: none;
 	opacity: 0.4;
 }
 
 .bordered-span {
 	border-style: solid;
-  border-color: #5cb85c;
+  border-color: @success-color;
 }
 
 .pairing-container {
 	margin-right: 0;
 	margin-left: 0;
-	background-color: #fff;
+	background-color: @common-background;
 	border-color: #ddd;
 	border-width: 1px;
 	box-shadow: none;
@@ -208,10 +244,9 @@ body {
 	position: relative;
 }
 
-.fa-ellipsis-v {
+.action-ellipsis {
 	margin-left: 35%;
-	color: #337ab7;
-	cursor: pointer;
+	color: @primary-color;
 }
 
 .status-bar {
@@ -227,12 +262,12 @@ body {
 }
 
 .left-nav-bar .fa-check-circle-o{
-	color: #5cb85c;
+	color: @success-color;
 }
 .left-nav-bar .fa-plus-square-o{
 	padding: 3px;
   font-size: 18px;
-	color: #5cb85c;
+	color: @success-color;
 }
 .list-group.list-group-root {
 	padding: 0;

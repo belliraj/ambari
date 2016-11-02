@@ -15,5 +15,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 }}
-<h1>Monitor</h1>
+<div id="monitoring-dashboard" class="">
+  <div class="clearfix">
+    <div class="replication-policies-title pull-left ">Monitoring Dashboard</div>
+  </div>
+  {{#instance-table instances=model.instances}}{{/instance-table}}
+</div>
 {{outlet}}

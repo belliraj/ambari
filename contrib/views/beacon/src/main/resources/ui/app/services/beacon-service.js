@@ -92,5 +92,9 @@ export default Ember.Service.extend({
       data: JSON.stringify({name : remoteClusterName, remoteBeaconEndpoint : remoteBeaconEndpoint}),
       dataType: 'json'
     });
+  },
+  getAllInstances(){
+    var url = this.get('baseUrl') + '/policy/instances/list';
+    return Ember.$.get(url);
   }
 });
