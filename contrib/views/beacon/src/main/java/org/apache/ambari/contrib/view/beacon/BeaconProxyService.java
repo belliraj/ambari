@@ -19,20 +19,17 @@ package org.apache.ambari.contrib.view.beacon;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
@@ -47,6 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class BeaconProxyService {
 	private final static Logger LOGGER = LoggerFactory
@@ -144,28 +144,43 @@ public class BeaconProxyService {
 		InputStream stream = readFromBeaconService(headers, urlToRead,
 				httpMethod, body, customHeaders);
 		String stringResponse = null;
-		GenericEntity<Object> entity = null;
 		try {
 			stringResponse = IOUtils.toString(stream);
 		} catch (IOException e) {
 			LOGGER.error("Error while converting stream to string", e);
 			throw new RuntimeException(e);
 		}
-		if (stringResponse.contains(Response.Status.BAD_REQUEST.name())) {
-			response = Response.status(Response.Status.BAD_REQUEST)
-					.entity(stringResponse).type(MediaType.TEXT_PLAIN).build();
+		if (!isJsonString(stringResponse)) {
+			response = Response.status(Response.Status.OK).entity(stringResponse).type(deduceType(stringResponse)).build();
 		} else {
-			Gson gson = new Gson();
-			Object object = gson.fromJson(stringResponse, Object.class);
-			entity = new GenericEntity<Object>(object) {};
+			JsonElement jelement = new JsonParser().parse(stringResponse);
+			if (jelement instanceof JsonObject &&  jelement.getAsJsonObject().get("status")!=null){//if error response from beacon throw BAD REQUEST TO THE CLIENT.
+				String status= jelement.getAsJsonObject().get("status").getAsString();
+				if ("FAILED".equals(status) || "PARTIAL".equals(status)){
+					return Response.status(Response.Status.BAD_REQUEST).entity(getGenericEntityFromJson(stringResponse)).build();
+				}
+			}
+			GenericEntity<Object> entity = getGenericEntityFromJson(stringResponse);
 			response = Response.status(Response.Status.OK).entity(entity)
 					.type(deduceType(stringResponse)).build();
 		}
 		return response;
 	}
 
+	private GenericEntity<Object> getGenericEntityFromJson(
+			String stringResponse) {
+		Gson gson = new Gson();
+		Object object = gson.fromJson(stringResponse, Object.class);
+		GenericEntity<Object> entity = new GenericEntity<Object>(object) {};
+		return entity;
+	}
+
+	private boolean isJsonString(String stringResponse) {
+		return stringResponse.startsWith("{") || stringResponse.startsWith("[");
+	}
+
 	private MediaType deduceType(String stringResponse) {
-		if (stringResponse.startsWith("{")) {
+		if (isJsonString(stringResponse)) {
 			return MediaType.APPLICATION_JSON_TYPE;
 		} else if (stringResponse.startsWith("<")) {
 			return MediaType.TEXT_XML_TYPE;

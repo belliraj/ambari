@@ -83,13 +83,18 @@ public class BeaconViewService {
 	public List<ClusterInfo> getRemoteClusters(@Context HttpHeaders headers) {
 		return ambariDelegate.getRemoteClusters();		
 	}
+	
+	@GET
+	@Path("getUserInfo")
+	public UserInfo getUserInfo(@Context HttpHeaders headers) {
+		UserInfo userInfo=new UserInfo();
+		userInfo.setName(viewContext.getUsername());
+		return userInfo;		
+	}
 
 	@GET
 	@Path("localClusterDetails")
 	public ClusterDetailInfo getLocalClusterDetail(@Context HttpHeaders headers) {
-		//ClusterDetailInfo clusterDetailInfo = new ClusterDetailInfo();
-		//clusterDetailInfo.setName(viewContext.getCluster().getName());
-		
 		return ambariDelegate.getLocalClusterDetail(configTypes,utils.getHeaders(headers));		
 	}
 
@@ -103,21 +108,10 @@ public class BeaconViewService {
 				jsonBody.get("userName").getAsString(), jsonBody
 						.get("password").getAsString(), configTypes);
 	}
-
-	@GET
-	@Path("status")
-	public String getStatus() {
-		return "ok";
-	}
+	
 
 	private String readFromHiveService(HttpHeaders headers, String urlToRead,
 			String method, String body, Map<String, String> customHeaders) {
-		// if (customHeaders==null){
-		// customHeaders=new HashMap<String,String>();
-		// }
-		// customHeaders.put(USER_NAME_HEADER, USER_BEACON_SUPER);
-		// customHeaders.put(DO_AS_HEADER, viewContext.getUsername());
-		// customHeaders.put("Accept", MediaType.APPLICATION_JSON);
 		return ambariUtils.readFromUrlAsString(urlToRead, method, body,
 				headers, customHeaders);
 
