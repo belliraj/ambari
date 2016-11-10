@@ -19,6 +19,7 @@ import Ember from 'ember';
 export default Ember.Route.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   beaconService : Ember.inject.service('beacon-service'),
+  breadcrumbService : Ember.inject.service('breadcrumb-service'),
 
   setupController: function(controller, model) {
     this._super(controller, model);
@@ -55,6 +56,9 @@ export default Ember.Route.extend({
         this.controllerFor('data-manager.replication-setup').set('model.registeredClusters', registeredClusters);
         Ember.getOwner(this).lookup('route:data-manager').controller.set('model.registeredClusters', registeredClusters);
       }.bind(this));
+    },
+    didTransition(){
+      this.get('breadcrumbService').showBreadcrumbs(this);
     }
   }
 });

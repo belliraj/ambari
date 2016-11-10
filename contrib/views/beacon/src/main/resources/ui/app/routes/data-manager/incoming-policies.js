@@ -18,6 +18,7 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
+  breadcrumbService : Ember.inject.service('breadcrumb-service'),
 
   model(){
       return Ember.RSVP.hash({
@@ -26,5 +27,10 @@ export default Ember.Route.extend({
   },
   setupController: function(controller, model) {
     this._super(controller, model);
+  },
+  actions : {
+    didTransition(){
+      this.get('breadcrumbService').showBreadcrumbs(this);
+    }
   }
 });

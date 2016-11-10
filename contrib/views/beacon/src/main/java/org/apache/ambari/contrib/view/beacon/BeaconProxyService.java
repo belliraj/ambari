@@ -58,7 +58,7 @@ public class BeaconProxyService {
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
 	// private static final String DEFAULT_SERVICE_URI =
 	// "http://sandbox.hortonworks.com:25000/beacon";
-	private static final String DEFAULT_SERVICE_URI = "http://192.168.56.1:8090";
+	private static final String DEFAULT_SERVICE_URI = "http://localhost:25000/beacon";
 	private Utils utils = new Utils();
 	private AmbariUtils ambariUtils;
 	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();

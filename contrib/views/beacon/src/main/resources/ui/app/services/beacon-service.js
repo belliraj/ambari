@@ -15,6 +15,7 @@
 *    limitations under the License.
 */
 import Ember from 'ember';
+import Constants from '../utils/constants';
 
 export default Ember.Service.extend({
   baseUrl : Ember.ENV.API_URL + '/beaconService/api/beacon',
@@ -27,16 +28,27 @@ export default Ember.Service.extend({
     return Ember.$.get(url);
   },
   registerCluster (clusterName, clusterInfo){
+    var data = '';
+    Object.keys(clusterInfo).forEach((key)=>{
+      data = data+key+'='+clusterInfo[key]+'\n';
+    });
     var url = this.get('baseUrl') + '/cluster/submit/' + clusterName;
     return Ember.$.ajax({
       type: "POST",
       url: url,
-      data: JSON.stringify(clusterInfo),
-      dataType: 'json'
+      data: data,
+      dataType: 'text'
     });
   },
-  getPolicies(){
-    var url = this.get('baseUrl') + '/policy/list';
+  getPolicies(params){
+    if(!params){
+      params = {};
+    }
+    if(!params.offset){
+      params.offset = 1;
+    }
+    params.pageSize = Constants.PAGINATION.pageSize;
+    var url = this.get('baseUrl') + '/policy/list?offset='+params.offset+'&numResults='+params.pageSize;
     return Ember.$.get(url);
   },
   getIncomingPolicies(){
@@ -45,10 +57,14 @@ export default Ember.Service.extend({
   },
   createPolicy(policy){
     var url = this.get('baseUrl') + '/policy/submit/' + policy.name;
+    var data = '';
+    Object.keys(policy).forEach((key)=>{
+      data = data+key+'='+policy[key]+'\n';
+    });
     return Ember.$.ajax({
       type: "POST",
       url: url,
-      data: JSON.stringify(policy),
+      data: data,
       dataType: 'json'
     });
   },
@@ -85,12 +101,10 @@ export default Ember.Service.extend({
     });
   },
   pairClusters(remoteClusterName, remoteBeaconEndpoint){
-    var url = this.get('baseUrl') + '/pair';
+    var url = this.get('baseUrl') + '/cluster/pair?remoteBeaconEndpoint=' + remoteBeaconEndpoint + '&remoteClusterName=' + remoteClusterName;
     return Ember.$.ajax({
       type: "POST",
-      url: url,
-      data: JSON.stringify({name : remoteClusterName, remoteBeaconEndpoint : remoteBeaconEndpoint}),
-      dataType: 'json'
+      url: url
     });
   },
   getAllInstances(){

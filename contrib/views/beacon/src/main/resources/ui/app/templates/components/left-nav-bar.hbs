@@ -24,15 +24,15 @@
       {{/link-to}}
     </div>
     {{#each groupedClusters as |group|}}
-    <div data-target="#group-{{group.colo}}" class="list-group-item group-name" data-toggle="collapse">
+    <div data-target="#group-{{group.dataCenter}}" class="list-group-item group-name" data-toggle="collapse">
       {{#if (contains group.clusters currentCluster)}}
-        <i class="fa fa-check-circle-o" aria-hidden="true"></i>{{group.colo}}
+        <i class="fa fa-check-circle-o" aria-hidden="true"></i>{{group.dataCenter}}
       {{else}}
-        {{group.colo}}
+        {{group.dataCenter}}
       {{/if}}
       <i class="fa fa-chevron-down pull-right" aria-hidden="true"></i>
     </div>
-    <div class="list-group collapse" id="group-{{group.colo}}">
+    <div class="list-group collapse" id="group-{{group.dataCenter}}">
       {{#each group.clusters as |cluster|}}
       <a class="list-group-item">
         {{#if (eq cluster.name currentCluster.name)}}
