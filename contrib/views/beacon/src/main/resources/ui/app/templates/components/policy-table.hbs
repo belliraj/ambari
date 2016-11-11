@@ -1,0 +1,95 @@
+{{!
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+}}
+<div id="replicationPolicies">
+  <div class="clearfix">
+    <div class="replication-policies-title pull-left ">Replication Policies</div>
+    <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
+  </div>
+
+  <table id="replication-policies-list" class="table listing table-striped table-hover replication-policies-list" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>STATUS</th>
+        <th>POLICY NAME</th>
+        <th>LAST GOOD</th>
+        <th>SCHEDULE</th>
+        <th>RUN TIME</th>
+        <th>SERVICE</th>
+        <th>DESTINATION</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each policies.entity as |policy|}}
+      <tr>
+        <td class="{{policy.status}}">{{policy.status}}</td>
+        <td>{{policy.name}}</td>
+        <td>{{policy.lastRun}}</td>
+        <td>{{policy.schedule}}</td>
+        <td>{{policy.runTime}}</td>
+        <td>{{policy.type}}</td>
+        <td>{{policy.targetCluster}}</td>
+        <td>
+          <div class="btn-group action-ellipsis">
+            <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+              <li {{action 'schedule' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Run Now</a></li>
+              <li {{action 'suspend' policy.name}} class='{{if (or (eq policy.status "SUBMITTED")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Suspend</a></li>
+              <li {{action 'resume' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUBMITTED")) "disabled-elt"}}'><a>Resume</a></li>
+              <li role="separator" class="divider"></li>
+              <li {{action 'delete' policy.name}}><a>Delete</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <div class="panel-footer">
+    <div class="row">
+      <div class="pull-right">
+        <div class="info">
+          Showing {{start}} to {{end}} of {{policies.totalResults}} records
+        </div>
+        <div class="pages btn-group btn-group-sm" role="group" aria-label="buttons">
+          {{#if (gt offset 1)}}
+          <button {{action 'previous' currentPage}} type="button" class="btn btn-default"> Previous </button>
+          {{else}}
+          <button type="button" class="btn btn-default disabled"> Previous </button>
+          {{/if}}
+          <div class="btn-group" role="group">
+            <div class="dropup">
+              <button class="btn btn-default dropdown-toggle page-selector" type="button" data-toggle="dropdown">{{currentPage}}
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  {{#each pages as |page|}}
+                    <li {{action 'goToPage' page.index}}><a href="#">{{page.displayIndex}}</a></li>
+                  {{/each}}
+                </ul>
+            </div>
+          </div>
+          {{#if (lt end policies.totalResults)}}
+            <button {{action 'next' currentPage}} type="button" class="btn btn-default"> Next </button>
+          {{else}}
+            <button type="button" class="btn btn-default disabled"> Next </button>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

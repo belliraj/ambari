@@ -25,10 +25,10 @@ export default Ember.Component.extend({
     return this.get('registeredClusters.entity').findBy('name', this.get('currentCluster.name'));
   }),
   sourceClusterPeers : Ember.computed('sourceClusterRegistrationInfo.peers.@each.id', function(){
-    if(Ember.isEmpty(this.get('sourceClusterRegistrationInfo'))){
+    if(Ember.isEmpty(this.get('sourceClusterRegistrationInfo')) || Ember.isEmpty(this.get('sourceClusterRegistrationInfo').peers)){
       return [];
     }
-    return this.get('sourceClusterRegistrationInfo').peers;
+    return this.get('sourceClusterRegistrationInfo').peers.split(",");
   }),
   sourceRegistered : Ember.computed('sourceClusterRegistrationInfo', function(){
     return !Ember.isEmpty(this.get('sourceClusterRegistrationInfo'));
@@ -44,9 +44,14 @@ export default Ember.Component.extend({
   extractRegistrationInfo(cluster){
     var clusterInfo = {};
     clusterInfo.name = cluster.name;
-    clusterInfo.colo = cluster.dataCenter;
+    clusterInfo.dataCenter = cluster.dataCenter;
     clusterInfo.fsEndpoint = cluster.configurations['core-site']['fs.defaultFS'];
     clusterInfo.hsEndpoint = cluster.configurations['hive-site']['hive.metastore.uris'];
+    //TODO - fix later. description is mandatory in backend.
+    clusterInfo.description = 'dummy';
+  //  clusterInfo.peers = 'ErieCluster_bkp';
+    //TODO - Temp Fix. Later show error when beacon service is not setup
+    clusterInfo.beaconEndpoint="http://localhost:25000/beacon";
     return clusterInfo;
   },
   registerCluster(name, clusterInfo){
@@ -92,6 +97,7 @@ export default Ember.Component.extend({
             }.bind(this)).fail(()=>{
               reject();
             });
+            this.sendAction('update');
           }else{
             resolve();
           }
@@ -128,6 +134,8 @@ export default Ember.Component.extend({
             //---
             clusterInfo.dataCenter = targetCluster.dataCenter;
             this.registerTargetCluster(clusterInfo).then(()=>{
+              //TODO - Temp Fix
+              clusterInfo.remoteBeaconEndpoint = "http://localhost:25000/beacon";
               this.pairClusters(clusterInfo).then(()=>{
                 this.set('currentlyPaired', {});
                 this.enablePairingContainer();

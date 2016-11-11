@@ -19,6 +19,7 @@ import Ember from 'ember';
 export default Ember.Route.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   beaconService : Ember.inject.service('beacon-service'),
+  breadcrumbService : Ember.inject.service('breadcrumb-service'),
   redirect(model) {
     if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
       return;
@@ -39,6 +40,10 @@ export default Ember.Route.extend({
       currentCluster : currentClusterPromise
     });
   },
+  setupController: function(controller, model) {
+    this._super(controller, model);
+    controller.set('breadcrumbService', this.get('breadcrumbService'));
+  },
   actions : {
     goToHomePage(){
       this.refresh();
@@ -51,6 +56,7 @@ export default Ember.Route.extend({
       if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
         Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
       }
+      this.get('breadcrumbService').showBreadcrumbs(this);
     }
   }
 });

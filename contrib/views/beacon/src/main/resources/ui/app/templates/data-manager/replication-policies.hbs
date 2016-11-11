@@ -16,52 +16,10 @@
 * limitations under the License.
 }}
 {{#if (and (gt model.policies.totalResults 0)(not createPolicyShown))}}
-<div id="replicationPolicies">
-  <div class="clearfix">
-    <div class="replication-policies-title pull-left ">Replication Policies</div>
-    <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
-  </div>
-
-  <table id="replication-policies-list" class="table listing table-striped table-hover replication-policies-list" cellspacing="0" width="100%">
-    <thead>
-      <tr>
-        <th>STATUS</th>
-        <th>POLICY NAME</th>
-        <th>LAST GOOD</th>
-        <th>SCHEDULE</th>
-        <th>RUN TIME</th>
-        <th>SERVICE</th>
-        <th>DESTINATION</th>
-        <th>ACTIONS</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each model.policies.entity as |policy|}}
-      <tr>
-        <td class="{{policy.status}}">{{policy.status}}</td>
-        <td>{{policy.name}}</td>
-        <td>{{policy.lastRun}}</td>
-        <td>{{policy.schedule}}</td>
-        <td>{{policy.runTime}}</td>
-        <td>{{policy.type}}</td>
-        <td>{{policy.targetCluster}}</td>
-        <td>
-          <div class="btn-group action-ellipsis">
-            <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-            <ul class="dropdown-menu">
-              <li {{action 'schedule' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Run Now</a></li>
-              <li {{action 'suspend' policy.name}} class='{{if (or (eq policy.status "SUBMITTED")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Suspend</a></li>
-              <li {{action 'resume' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUBMITTED")) "disabled-elt"}}'><a>Resume</a></li>
-              <li role="separator" class="divider"></li>
-              <li {{action 'delete' policy.name}}><a>Delete</a></li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
-</div>
+  {{#policy-table policies=model.policies createPolicy="createPolicy"
+    schedule="schedule" suspend="suspend" resume="resume" delete="delete"
+    goToPage="goToPage" offset=offset orderBy=orderBy
+    sortOrder=sortOrder numResults=numResults}}{{/policy-table}}
 {{else if (not createPolicyShown)}}
 <div class="no-replication-policy">
   <span>No replication policies created.<br/>Create first replication policy.</span>

@@ -15,28 +15,38 @@
  *    limitations under the License.
  */
 import Ember from 'ember';
+import Constants from '../../utils/constants';
 
 export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
-
+  breadcrumbService : Ember.inject.service('breadcrumb-service'),
+  queryParams : {
+    orderBy : {refreshModel : true},
+    sortOrder : {refreshModel : true},
+    offset : {refreshModel : true},
+    numResults : {refreshModel : true}
+  },
   afterModel(model){
     var registeredCluster = this.modelFor('data-manager').registeredClusters.entity;
     model.currentCluster = registeredCluster.findBy('name',this.modelFor('data-manager').currentCluster.name);
-    if(model.currentCluster){
-      model.pairedClusters = model.currentCluster.peers;
+    if(model.currentCluster &&  model.currentCluster.peers){
+      model.pairedClusters = model.currentCluster.peers.split(",");
     }else{
       model.pairedClusters = [];
     }
   },
-  model(){
-      return Ember.RSVP.hash({
-         policies : this.get('beaconService').getPolicies()
-      });
+  model(params){
+    return Ember.RSVP.hash({
+       policies : this.get('beaconService').getPolicies(params)
+    });
   },
   setupController: function(controller, model) {
     this._super(controller, model);
   },
   actions : {
+    willTransition(){
+      this.get('breadcrumbService').updateBreadcrumbs(this.routeName);
+    },
     createPolicy(){
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
     },
@@ -74,6 +84,16 @@ export default Ember.Route.extend({
         this.refresh();
       }).fail(()=>{
         console.error("Policy delete - failed");
+      });
+    },
+    didTransition() {
+      this.get('breadcrumbService').showBreadcrumbs(this);
+    },
+    goToPage(params){
+      this.transitionTo('data-manager.replication-policies', {
+        queryParams:{
+        'offset' : params.offset
+        }
       });
     }
   }

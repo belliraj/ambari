@@ -14,19 +14,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
 
-import Ember from 'ember';
+moduleForComponent('policy-table', 'Integration | Component | policy table', {
+  integration: true
+});
 
-export default Ember.Object.create({
-  MOCK_INFO : {
-    isRegisteredInBeacon : false,
-    localCluster : 'secondaryCluster',
-    hiveDatabases : [{name : 'Test1'}, {name : 'Test2'}, {name :'Test-3'}, {name :'Test-4'}]
-  },
-  PAGINATION : {
-    pageSize : 5,
-    offset : 0,
-    ascOrder : 'asc',
-    descOrder :'desc'
-  }
+test('it renders', function(assert) {
+  // Set any properties with this.set('myProperty', 'value');
+  // Handle any actions with this.on('myAction', function(val) { ... });
+
+  this.render(hbs`{{policy-table}}`);
+
+  assert.equal(this.$().text().trim(), '');
+
+  // Template block usage:
+  this.render(hbs`
+    {{#policy-table}}
+      template block text
+    {{/policy-table}}
+  `);
+
+  assert.equal(this.$().text().trim(), 'template block text');
 });
