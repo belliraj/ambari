@@ -23,6 +23,10 @@ export default Ember.Service.extend({
     var url = this.get('baseUrl') + '/localClusterDetails';
     return Ember.$.get(url);
   },
+  getUserInfo(){
+    var url = this.get('baseUrl') + '/getUserInfo';
+    return Ember.$.get(url);
+  },
   getRemoteClusterInfo(ambariUrl, auth){
     var url = this.get('baseUrl') + '/remoteClusterDetails?ambariUrl=' + ambariUrl;
     return Ember.$.ajax({
