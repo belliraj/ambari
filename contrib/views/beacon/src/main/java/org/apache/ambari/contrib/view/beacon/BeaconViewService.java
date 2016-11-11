@@ -17,6 +17,7 @@
  */
 package org.apache.ambari.contrib.view.beacon;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.ambari.view.ViewContext;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +91,12 @@ public class BeaconViewService {
 	public UserInfo getUserInfo(@Context HttpHeaders headers) {
 		UserInfo userInfo=new UserInfo();
 		userInfo.setName(viewContext.getUsername());
+		try {
+			UserGroupInformation currentUser = UserGroupInformation.getLoginUser();
+			userInfo.setGroupNames(currentUser.getGroupNames());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		return userInfo;		
 	}
 
@@ -109,6 +117,18 @@ public class BeaconViewService {
 						.get("password").getAsString(), configTypes);
 	}
 	
+	@POST
+	@Path("registerRemoteCluster")
+	public Boolean registerRemoteCluster(String postBody,
+			@Context HttpHeaders headers,
+			@QueryParam("ambariUrl") String ambariUrl){
+		JsonObject jsonBody = utils.parseJson(postBody).getAsJsonObject();
+		String userName=jsonBody.get("userName").getAsString();
+		String pwd=jsonBody.get("password").getAsString();
+		ClusterDetailInfo remoteClusterConfigurations = remoteAmbariDelegate.getRemoteClusterConfigurations(ambariUrl,userName, pwd, configTypes);
+		
+		return false;
+	}
 
 	private String readFromHiveService(HttpHeaders headers, String urlToRead,
 			String method, String body, Map<String, String> customHeaders) {

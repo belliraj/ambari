@@ -19,7 +19,7 @@ package org.apache.ambari.contrib.view.beacon;
 
 public class UserInfo {
 	private String name;
-
+	private String groupNames[];
 	public String getName() {
 		return name;
 	}
@@ -27,4 +27,13 @@ public class UserInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String[] getGroupNames() {
+		return groupNames;
+	}
+
+	public void setGroupNames(String[] groupNames) {
+		this.groupNames = groupNames;
+	}
+	
 }
