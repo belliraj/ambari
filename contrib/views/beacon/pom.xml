@@ -133,7 +133,7 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>ember</executable>
+							<executable>${ui.directory}/node_modules/.bin/${ember.executable}</executable>
 							<workingDirectory>${ui.directory}</workingDirectory>
 							<arguments>
 								<argument>build</argument>
@@ -204,6 +204,7 @@
 			</activation>
 			<properties>
 				<node.executable>node.exe</node.executable>
+				<ember.executable>ember.cmd</ember.executable>
 				<skip.nodegyp.chmod>true</skip.nodegyp.chmod>
 			</properties>
 		</profile>
@@ -216,6 +217,7 @@
 			</activation>
 			<properties>
 				<node.executable>node</node.executable>
+				<ember.executable>ember</ember.executable>
 				<skip.nodegyp.chmod>false</skip.nodegyp.chmod>
 			</properties>
 		</profile>
