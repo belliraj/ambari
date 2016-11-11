@@ -62,12 +62,20 @@ public class BeaconProxyService {
 	private Utils utils = new Utils();
 	private AmbariUtils ambariUtils;
 	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();
+	private String customServiceUri;
 
 	public BeaconProxyService(ViewContext context) {
 		super();
 		this.viewContext = context;
 		this.ambariUtils = new AmbariUtils(viewContext);
 	}
+	public BeaconProxyService(ViewContext context,String serviceUri) {
+		super();
+		this.viewContext = context;
+		this.ambariUtils = new AmbariUtils(viewContext);
+		this.customServiceUri=serviceUri;
+	}
+
 
 	@GET
 	@Path("/{path: .*}")
@@ -237,6 +245,9 @@ public class BeaconProxyService {
 	}
 
 	private String getServiceUri() {
+		if (customServiceUri!=null){
+			return customServiceUri;
+		}
 		return utils.getServiceUri(viewContext, SERVICE_URI_PROP,
 				DEFAULT_SERVICE_URI);
 	}

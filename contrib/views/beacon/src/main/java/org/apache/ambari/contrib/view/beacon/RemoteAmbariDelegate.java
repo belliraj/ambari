@@ -83,7 +83,7 @@ public class RemoteAmbariDelegate extends BaseAmbariDelegate {
 		final String remoteAmbariClusterUrl = url
 				+ AmbariApi.API_PREFIX + clusterName;
 
-		List<Future<String>> futures = new ArrayList<Future<String>>();
+		List<Future<String>> configurationFutures = new ArrayList<Future<String>>();
 		for (final String configurationType : configurationTypes) {
 			final String tag = allDesiredTagMap.get(configurationType);
 			Callable<String> callable = new Callable<String>() {
@@ -93,17 +93,16 @@ public class RemoteAmbariDelegate extends BaseAmbariDelegate {
 							userName, password, configurationType, tag);
 				}
 			};
-			Future<String> future = excutorPool.submit(callable);
-			futures.add(future);
+			Future<String> configurationFuture = excutorPool.submit(callable);
+			configurationFutures.add(configurationFuture);
 		}
 		ClusterDetailInfo clusterDetails = new ClusterDetailInfo();
 		clusterDetails.setUrl(url);
 		clusterDetails.setName(clusterName);
-
-		for (int i = 0; i < futures.size(); i++) {
+		for (int i = 0; i < configurationFutures.size(); i++) {
 			Future<String> result;
 			try {
-				result = futures.get(i);
+				result = configurationFutures.get(i);
 				String config = result.get();
 				processConfiguration(config, clusterDetails);
 			} catch (InterruptedException e) {

@@ -31,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -52,6 +53,7 @@ public class BeaconViewService {
 	private RemoteAmbariDelegate remoteAmbariDelegate;
 	private AmbariDelegate ambariDelegate;
 	private AmbariUtils ambariUtils;
+	private BeaconProxyService beaconProxyService;
 	
 	@Inject
 	public BeaconViewService(ViewContext viewContext) {
@@ -64,7 +66,13 @@ public class BeaconViewService {
 
 	@Path("beaconService")
 	public BeaconProxyService beaconProxyService() {
-		return new BeaconProxyService(viewContext);
+		beaconProxyService= new BeaconProxyService(viewContext);
+		return beaconProxyService;
+	}
+	
+	@Path("/fileServices")
+	public FileServices fileServices() {
+		return new FileServices(viewContext);
 	}
 
 	@GET
@@ -119,15 +127,16 @@ public class BeaconViewService {
 	
 	@POST
 	@Path("registerRemoteCluster")
-	public Boolean registerRemoteCluster(String postBody,
-			@Context HttpHeaders headers,
-			@QueryParam("ambariUrl") String ambariUrl){
-		JsonObject jsonBody = utils.parseJson(postBody).getAsJsonObject();
-		String userName=jsonBody.get("userName").getAsString();
-		String pwd=jsonBody.get("password").getAsString();
-		ClusterDetailInfo remoteClusterConfigurations = remoteAmbariDelegate.getRemoteClusterConfigurations(ambariUrl,userName, pwd, configTypes);
+	public Response registerRemoteCluster(String postBody,
+			@Context HttpHeaders headers, @Context UriInfo ui,
+			@QueryParam("remoteBeaconUrl") String ambariUrl){
 		
-		return false;
+		
+//		String userName=jsonBody.get("userName").getAsString();
+//		String pwd=jsonBody.get("password").getAsString();
+//		ClusterDetailInfo remoteClusterConfigurations = remoteAmbariDelegate.getRemoteClusterConfigurations(ambariUrl,userName, pwd, configTypes);
+		return beaconProxyService.handlePost(postBody, headers, ui);
+
 	}
 
 	private String readFromHiveService(HttpHeaders headers, String urlToRead,
