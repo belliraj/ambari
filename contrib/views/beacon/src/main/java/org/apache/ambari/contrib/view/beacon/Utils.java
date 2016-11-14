@@ -28,14 +28,11 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class Utils {
-//	private final static Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
 	public Map<String, String> getBasicAuthHeaders(String username,
 			String password) {

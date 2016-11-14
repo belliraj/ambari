@@ -31,7 +31,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.ambari.view.ViewContext;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -46,30 +45,35 @@ public class BeaconViewService {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeaconViewService.class);
 	private final String[] configTypes = { "core-site", "hive-site" };
-	private ViewContext viewContext;
-	private Utils utils = new Utils();
 	private final static String HIVE_SERVICE_URI_PROP = "hive.rest.uri";
 	private static final String DEFAULT_HIVE_SERVICE_URI = "http://sandbox.hortonworks.com:50111";
 	private RemoteAmbariDelegate remoteAmbariDelegate;
 	private AmbariDelegate ambariDelegate;
 	private AmbariUtils ambariUtils;
-	private BeaconProxyService beaconProxyService;
-	
+	private ViewContext viewContext;
+	private Utils utils = new Utils();
+
 	@Inject
 	public BeaconViewService(ViewContext viewContext) {
 		super();
 		this.viewContext = viewContext;
 		this.remoteAmbariDelegate = new RemoteAmbariDelegate(viewContext);
 		this.ambariDelegate = new AmbariDelegate(viewContext);
-		ambariUtils = new AmbariUtils(viewContext);
+		this.ambariUtils = new AmbariUtils(viewContext);
+
 	}
 
 	@Path("beaconService")
-	public BeaconProxyService beaconProxyService() {
-		beaconProxyService= new BeaconProxyService(viewContext);
-		return beaconProxyService;
+	public LocalBeaconProxyService beaconProxyService() {
+		return new LocalBeaconProxyService(	viewContext);
+
 	}
 	
+	@Path("remoteBeaconService")
+	public RemoteBeaconProxyService remoteBeaconProxyService(){
+		return new RemoteBeaconProxyService(viewContext);
+	}
+
 	@Path("/fileServices")
 	public FileServices fileServices() {
 		return new FileServices(viewContext);
@@ -87,31 +91,33 @@ public class BeaconViewService {
 				null, null);
 		return Response.ok(hiveDbs).build();
 	}
-	
+
 	@GET
 	@Path("listRemoteClusters")
 	public List<ClusterInfo> getRemoteClusters(@Context HttpHeaders headers) {
-		return ambariDelegate.getRemoteClusters();		
+		return ambariDelegate.getRemoteClusters();
 	}
-	
+
 	@GET
 	@Path("getUserInfo")
 	public UserInfo getUserInfo(@Context HttpHeaders headers) {
-		UserInfo userInfo=new UserInfo();
+		UserInfo userInfo = new UserInfo();
 		userInfo.setName(viewContext.getUsername());
 		try {
-			UserGroupInformation currentUser = UserGroupInformation.getLoginUser();
+			UserGroupInformation currentUser = UserGroupInformation
+					.getLoginUser();
 			userInfo.setGroupNames(currentUser.getGroupNames());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return userInfo;		
+		return userInfo;
 	}
 
 	@GET
 	@Path("localClusterDetails")
 	public ClusterDetailInfo getLocalClusterDetail(@Context HttpHeaders headers) {
-		return ambariDelegate.getLocalClusterDetail(configTypes,utils.getHeaders(headers));		
+		return ambariDelegate.getLocalClusterDetail(configTypes,
+				utils.getHeaders(headers));
 	}
 
 	@POST
@@ -124,20 +130,8 @@ public class BeaconViewService {
 				jsonBody.get("userName").getAsString(), jsonBody
 						.get("password").getAsString(), configTypes);
 	}
-	
-	@POST
-	@Path("registerRemoteCluster")
-	public Response registerRemoteCluster(String postBody,
-			@Context HttpHeaders headers, @Context UriInfo ui,
-			@QueryParam("remoteBeaconUrl") String ambariUrl){
-		
-		
-//		String userName=jsonBody.get("userName").getAsString();
-//		String pwd=jsonBody.get("password").getAsString();
-//		ClusterDetailInfo remoteClusterConfigurations = remoteAmbariDelegate.getRemoteClusterConfigurations(ambariUrl,userName, pwd, configTypes);
-		return beaconProxyService.handlePost(postBody, headers, ui);
 
-	}
+
 
 	private String readFromHiveService(HttpHeaders headers, String urlToRead,
 			String method, String body, Map<String, String> customHeaders) {
