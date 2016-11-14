@@ -5,6 +5,7 @@
     "ember-cli-shims": "0.1.1",
     "bootstrap": "~3.3.6",
     "font-awesome": "fontawesome#^4.5.0",
-    "spin.js": "~2.3.2"
+    "spin.js": "~2.3.2",
+    "bootstrap-treeview": "~1.2.0"
   }
 }

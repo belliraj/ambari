@@ -27,5 +27,7 @@
 </div>
 {{/if}}
 {{#if createPolicyShown}}
-{{#create-replication-policy currentCluster=model.currentCluster pairedClusters=model.pairedClusters savePolicy="savePolicy"}}{{/create-replication-policy}}
+{{#create-replication-policy currentCluster=model.currentCluster
+  pairedClusters=model.pairedClusters savePolicy="savePolicy"
+  userInfo=model.userInfo}}{{/create-replication-policy}}
 {{/if}}

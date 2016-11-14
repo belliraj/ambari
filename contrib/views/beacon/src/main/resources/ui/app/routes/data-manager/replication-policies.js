@@ -19,6 +19,7 @@ import Constants from '../../utils/constants';
 
 export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
+  beaconViewService : Ember.inject.service('beacon-view-service'),
   breadcrumbService : Ember.inject.service('breadcrumb-service'),
   queryParams : {
     orderBy : {refreshModel : true},
@@ -37,7 +38,8 @@ export default Ember.Route.extend({
   },
   model(params){
     return Ember.RSVP.hash({
-       policies : this.get('beaconService').getPolicies(params)
+       policies : this.get('beaconService').getPolicies(params),
+       userInfo : this.get('beaconViewService').getUserInfo()
     });
   },
   setupController: function(controller, model) {

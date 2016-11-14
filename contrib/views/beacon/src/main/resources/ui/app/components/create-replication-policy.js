@@ -25,6 +25,9 @@ export default Ember.Component.extend({
     this.set('policy.type', 'HIVE');
     this.set('policy.sourceCluster', this.get('currentCluster.name'));
     this.set('hiveDatabases', Constants.MOCK_INFO.hiveDatabases);
+    this.set('policy.aclOwner', this.get('userInfo').name);
+    this.set('policy.aclGroup', this.get('userInfo').groupNames.join());
+    this.set('policy.aclPermission', '0x755');
   }.on('init'),
   actions : {
     createPolicy(){
@@ -58,6 +61,20 @@ export default Ember.Component.extend({
     },
     onDBSelect(type){
       this.set('selectionType', type);
+    },
+    browse(modelProp){
+      this.set('showingFileBrowser', true);
+    },
+    closeFileBrowser(){
+      this.set('showingFileBrowser', false);
+      this.set('policy.dataset', this.get('filePath'));
+    },
+    collapseHandler(){
+      if(this.$('#advanced-panel').hasClass('in')){
+        this.set('collapsed', false);
+      }else{
+        this.set('collapsed', true);
+      }
     }
   }
 });

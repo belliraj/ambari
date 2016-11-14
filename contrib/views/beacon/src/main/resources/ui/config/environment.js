@@ -28,6 +28,7 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       },
       API_URL : "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy",
+      FILE_API_URL : "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy/fileServices"
     },
 
     APP: {
