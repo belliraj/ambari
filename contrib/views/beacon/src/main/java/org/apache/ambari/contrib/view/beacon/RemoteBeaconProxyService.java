@@ -22,7 +22,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.ambari.view.ViewContext;
 
-public class RemoteBeaconProxyService extends BeaconProxyService{
+public class RemoteBeaconProxyService extends BeaconProxyService {
+	private final int BEACON_URI_PORTION_LEN = "proxy/remoteBeaconService"
+			.length();
 
 	public RemoteBeaconProxyService(ViewContext context) {
 		super(context);
@@ -30,9 +32,17 @@ public class RemoteBeaconProxyService extends BeaconProxyService{
 
 	@Override
 	protected String getServiceUri(UriInfo ui) {
-		 MultivaluedMap<String, String> queryParameters = ui.getQueryParameters();
-		 return queryParameters.getFirst(BeaconViewConstants.REMOTE_BEACON_ENDPOINT);
+		MultivaluedMap<String, String> queryParameters = ui
+				.getQueryParameters();
+		return queryParameters
+				.getFirst(BeaconViewConstants.REMOTE_BEACON_ENDPOINT)
+				+ getApiPath(ui.getAbsolutePath().getPath());
 	}
-	
+
+	private String getApiPath(String uiURI) {
+		int index = uiURI.indexOf("proxy/") + BEACON_URI_PORTION_LEN;
+		uiURI = uiURI.substring(index);
+		return uiURI;
+	}
 
 }

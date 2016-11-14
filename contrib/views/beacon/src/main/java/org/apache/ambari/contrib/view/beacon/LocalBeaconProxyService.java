@@ -24,14 +24,22 @@ import org.apache.ambari.view.ViewContext;
 public class LocalBeaconProxyService extends BeaconProxyService{
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
 	private static final String DEFAULT_SERVICE_URI = "http://localhost:25000/beacon";
+	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();
 
 	public LocalBeaconProxyService(ViewContext context) {
 		super(context);		
 	}
 	
+	@Override
 	protected String getServiceUri(UriInfo ui) {
+		String uiURI = ui.getAbsolutePath().getPath();
 		return utils.getServiceUri(viewContext, SERVICE_URI_PROP,
-				DEFAULT_SERVICE_URI);
+				DEFAULT_SERVICE_URI)+getApiPath(uiURI);
 	}
 
+	private String getApiPath(String uiURI) {
+		int index = uiURI.indexOf("proxy/") + BEACON_URI_PORTION_LEN;
+		uiURI = uiURI.substring(index);
+		return uiURI;
+	}
 }

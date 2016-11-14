@@ -44,7 +44,7 @@ import com.google.gson.JsonParser;
 public class BeaconProxy {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeaconProxy.class);
-	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();
+
 	private static final String USER_NAME_HEADER = "user.name";
 	private static final String USER_BEACON_SUPER = "beacon";
 	private static final String DO_AS_HEADER = "doAs";
@@ -65,7 +65,7 @@ public class BeaconProxy {
 	public Response consumeService(String serviceUrl,HttpHeaders headers,  UriInfo ui,
 			String httpMethod, String body, Map<String, String> customHeaders) {
 		Response response = null;
-		InputStream stream = readFromBeaconService(headers, buildURI(ui),
+		InputStream stream = readFromBeaconService(headers, serviceUrl+buildRequestParams(ui),
 				httpMethod, body, customHeaders);
 		String stringResponse = null;
 		try {
@@ -104,13 +104,9 @@ public class BeaconProxy {
 		return stream;
 	}
 
-	private String buildURI(UriInfo ui) {
-		String uiURI = ui.getAbsolutePath().getPath();
-
-		int index = uiURI.indexOf("proxy/") + BEACON_URI_PORTION_LEN;
-		uiURI = uiURI.substring(index);
-		MultivaluedMap<String, String> parameters = ui.getQueryParameters();
-		StringBuilder urlBuilder = new StringBuilder(uiURI);
+	private String buildRequestParams(UriInfo ui) {
+			MultivaluedMap<String, String> parameters = ui.getQueryParameters();
+		StringBuilder urlBuilder = new StringBuilder();
 		boolean firstEntry = true;
 		for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
 			if (BeaconViewConstants.REMOTE_BEACON_ENDPOINT.equals(entry.getKey())){

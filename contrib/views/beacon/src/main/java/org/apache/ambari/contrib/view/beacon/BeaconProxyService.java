@@ -95,6 +95,7 @@ public abstract class BeaconProxyService {
 
 		try {
 			String serviceURI = getServiceUri(ui);
+			
 			return beaconProxy.consumeService(serviceURI,headers, ui, HttpMethod.PUT, body);
 		} catch (Exception ex) {
 			LOGGER.error("Error in PUT proxy", ex);
@@ -105,5 +106,6 @@ public abstract class BeaconProxyService {
 
 
 	protected abstract String getServiceUri(UriInfo ui) ;
+
 
 }
