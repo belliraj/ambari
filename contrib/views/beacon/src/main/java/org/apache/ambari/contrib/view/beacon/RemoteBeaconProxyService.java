@@ -35,11 +35,11 @@ public class RemoteBeaconProxyService extends BeaconProxyService {
 		MultivaluedMap<String, String> queryParameters = ui
 				.getQueryParameters();
 		return queryParameters
-				.getFirst(BeaconViewConstants.REMOTE_BEACON_ENDPOINT)
+				.getFirst(BeaconViewConstants.BEACON_SERVICE_ENDPOINT)
 				+ getApiPath(ui.getAbsolutePath().getPath());
 	}
 
-	private String getApiPath(String uiURI) {
+	protected String getApiPath(String uiURI) {
 		int index = uiURI.indexOf("proxy/") + BEACON_URI_PORTION_LEN;
 		uiURI = uiURI.substring(index);
 		return uiURI;

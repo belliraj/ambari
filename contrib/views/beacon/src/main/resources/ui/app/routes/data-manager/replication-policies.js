@@ -31,7 +31,12 @@ export default Ember.Route.extend({
     var registeredCluster = this.modelFor('data-manager').registeredClusters.entity;
     model.currentCluster = registeredCluster.findBy('name',this.modelFor('data-manager').currentCluster.name);
     if(model.currentCluster &&  model.currentCluster.peers){
-      model.pairedClusters = model.currentCluster.peers.split(",");
+      var peerNames = model.currentCluster.peers.split(",");
+      var peers = [];
+      peerNames.forEach((name) =>{
+        peers.pushObject({'name' : name});
+      }, this);
+      model.pairedClusters = peers;
     }else{
       model.pairedClusters = [];
     }

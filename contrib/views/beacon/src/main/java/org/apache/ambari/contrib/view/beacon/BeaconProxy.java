@@ -109,7 +109,7 @@ public class BeaconProxy {
 		StringBuilder urlBuilder = new StringBuilder();
 		boolean firstEntry = true;
 		for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
-			if (BeaconViewConstants.REMOTE_BEACON_ENDPOINT.equals(entry.getKey())){
+			if (BeaconViewConstants.BEACON_SERVICE_ENDPOINT.equals(entry.getKey())){
 				continue;
 			}
 			if ("user.name".equals(entry.getKey())) {

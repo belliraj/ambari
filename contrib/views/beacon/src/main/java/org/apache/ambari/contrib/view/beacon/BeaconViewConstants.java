@@ -18,5 +18,5 @@
 package org.apache.ambari.contrib.view.beacon;
 
 public interface BeaconViewConstants {
-	 String REMOTE_BEACON_ENDPOINT="remoteBeaconEndpoint";
+	 String BEACON_SERVICE_ENDPOINT ="beaconEndpoint";
 }

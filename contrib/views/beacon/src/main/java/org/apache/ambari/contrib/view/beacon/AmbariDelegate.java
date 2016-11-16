@@ -57,7 +57,7 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 	}
 
 	public List<ClusterInfo> getRemoteClusters() {
-		JsonElement resp = readFromAmbariAsJson("remoteclusters", "GET", null,
+		JsonElement resp = readFromAmbariAsJson("remoteclusters?ClusterInfo/name.matches(.*.*)&fields=*", "GET", null,
 				null);
 		JsonObject remoteClusterJsonObj = resp.getAsJsonObject();
 		ArrayList<ClusterInfo> remoteClusters = new ArrayList<ClusterInfo>();
@@ -67,9 +67,10 @@ public class AmbariDelegate extends BaseAmbariDelegate {
 			for (int i = 0, size = itemsArray.size(); i < size; i++) {
 				JsonObject clusterObject = itemsArray.get(i).getAsJsonObject();
 				ClusterInfo cluster = new ClusterInfo();
-				cluster.setUrl(clusterObject.get("href").getAsString());
-				String clusterName = clusterObject.get("ClusterInfo")
-						.getAsJsonObject().get("name").getAsString();
+				String url = clusterObject.get("ClusterInfo").getAsJsonObject()
+						.get("url").getAsString();
+				String clusterName = url.substring(url.lastIndexOf("/")+1, url.length());
+				cluster.setUrl(url);
 				cluster.setName(clusterName);
 				remoteClusters.add(cluster);
 			}

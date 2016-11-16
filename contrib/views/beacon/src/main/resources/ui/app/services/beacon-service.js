@@ -45,7 +45,7 @@ export default Ember.Service.extend({
       params = {};
     }
     if(!params.offset){
-      params.offset = 1;
+      params.offset = 0;
     }
     params.pageSize = Constants.PAGINATION.pageSize;
     var url = this.get('baseUrl') + '/policy/list?offset='+params.offset+'&numResults='+params.pageSize;
