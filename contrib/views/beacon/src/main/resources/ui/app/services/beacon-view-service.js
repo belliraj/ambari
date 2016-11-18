@@ -40,11 +40,8 @@ export default Ember.Service.extend({
     var url = this.get('baseUrl') + '/listRemoteClusters';
     return Ember.$.get(url);
   },
-  isRegisteredInBeacon(){
-    return Constants.MOCK_INFO.isRegisteredInBeacon;
-  },
-  pairCluster(clusterName){
-    var url = this.get('baseUrl') + '/pair/' + clusterName;
-    return Ember.$.post(url);
+  getHiveDbs(){
+    var url = this.get('baseUrl') + '/hiveDBs';
+    return Ember.$.get(url);
   }
 });

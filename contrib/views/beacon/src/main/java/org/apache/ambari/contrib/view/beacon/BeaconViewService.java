@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,6 +38,7 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Singleton;
 
@@ -46,7 +48,7 @@ public class BeaconViewService {
 			.getLogger(BeaconViewService.class);
 	private final String[] configTypes = { "core-site", "hive-site" };
 	private final static String HIVE_SERVICE_URI_PROP = "hive.rest.uri";
-	private static final String DEFAULT_HIVE_SERVICE_URI = "http://sandbox.hortonworks.com:50111";
+	private static final String DEFAULT_HIVE_SERVICE_URI = "http://localhost:50111";
 	private RemoteAmbariDelegate remoteAmbariDelegate;
 	private AmbariDelegate ambariDelegate;
 	private AmbariUtils ambariUtils;
@@ -89,7 +91,7 @@ public class BeaconViewService {
 				+ viewContext.getUsername();
 		String hiveDbs = readFromHiveService(headers, hiveDBGetUrl, "GET",
 				null, null);
-		return Response.ok(hiveDbs).build();
+		return Response.ok(getGenericEntityFromJson(hiveDbs)).build();
 	}
 
 	@GET
@@ -143,5 +145,13 @@ public class BeaconViewService {
 	private String getHiveServiceUri() {
 		return utils.getServiceUri(viewContext, HIVE_SERVICE_URI_PROP,
 				DEFAULT_HIVE_SERVICE_URI);
+	}
+	
+	private GenericEntity<Object> getGenericEntityFromJson(
+			String stringResponse) {
+		Gson gson = new Gson();
+		Object object = gson.fromJson(stringResponse, Object.class);
+		GenericEntity<Object> entity = new GenericEntity<Object>(object) {};
+		return entity;
 	}
 }

@@ -18,17 +18,36 @@ import Ember from 'ember';
 import Constants from '../utils/constants';
 
 export default Ember.Component.extend({
+  beaconViewService : Ember.inject.service('beacon-view-service'),
   initialize : function(){
     this.set('selectionType', 'all');
     this.set('policy', {});
     this.set('policy.frequencyInSec', 86400);
     this.set('policy.type', 'HIVE');
     this.set('policy.sourceCluster', this.get('currentCluster.name'));
-    this.set('hiveDatabases', Constants.MOCK_INFO.hiveDatabases);
+    this.getHiveDbs();
     this.set('policy.aclOwner', this.get('userInfo').name);
     this.set('policy.aclGroup', this.get('userInfo').groupNames.join());
     this.set('policy.aclPermission', '0x755');
   }.on('init'),
+  getHiveDbs(){
+    this.set('requestInProcess', true);
+    this.set('hiveError', false);
+    this.get('beaconViewService').getHiveDbs().done((response)=>{
+      this.set('requestInProcess', false);
+      var dbs = [];
+      response.databases.forEach((name)=>{
+        dbs.pushObject({'name':name});
+      });
+      this.set('hiveDatabases', dbs);
+    }).fail((e)=>{
+      console.error(e);
+      this.set('requestInProcess', false);
+      //this.set('hiveError', true);
+      //TODO - MOCK
+      this.set('hiveDatabases', Constants.MOCK_INFO.hiveDatabases);
+    });
+  },
   actions : {
     createPolicy(){
       if(this.get('policy.type') === 'HIVE' && this.get('selectionType') === 'all'){
@@ -39,7 +58,12 @@ export default Ember.Component.extend({
           selectedDBs.push(checkbox.value);
         });
         this.set('policy.dataset', selectedDBs.join());
+        this.set('policy.sourceDatabase', this.get('policy.dataset'));
+      }else{
+        this.set('policy.sourceDir', this.get('policy.dataset'));
+        this.set('policy.targetDir', this.get('policy.dataset'));
       }
+      this.set('policy.frequencyInSec', 120);
       this.sendAction("savePolicy", this.get('policy'));
     },
     changeSchedule(type){
@@ -75,6 +99,23 @@ export default Ember.Component.extend({
       }else{
         this.set('collapsed', true);
       }
+    },
+    policyTypeChanged(type){
+      this.set('policy.type', type);
+      if(type === 'HDFS'){
+        this.set('policy.distcpMaxMaps',1);
+        this.set('policy.distcpMapBandwidth',10)
+        this.set('policy.tdeEncryptionEnabled',false);
+        this.set('policy.preservePermission', true);
+      }else{
+        delete this.get('policy.distcpMaxMaps');
+        delete this.get('policy.distcpMapBandwidth');
+        delete this.get('policy.tdeEncryptionEnabled');
+        delete this.get('policy.preservePermission');
+      }
+    },
+    getHiveDbs(){
+      this.getHiveDbs();
     }
   }
 });

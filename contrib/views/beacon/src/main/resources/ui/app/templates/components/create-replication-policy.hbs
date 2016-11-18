@@ -36,10 +36,10 @@
 							<label class="control-label smaller-font">SERVICE</label>
 							<div>
 								<label class="radio-inline">
-									<input type="radio" value="HIVE" checked={{if (eq policy.type 'HIVE') 'checked'}} onchange={{action (mut policy.type) value="target.value"}} name="replicationType">HIVE
+									<input type="radio" value="HIVE" checked={{if (eq policy.type 'HIVE') 'checked'}} onchange={{action "policyTypeChanged" value="target.value"}} name="replicationType">HIVE
 								</label>
 								<label class="radio-inline">
-									<input type="radio" value="HDFS" checked={{if (eq policy.type 'HDFS') 'checked'}} onchange={{action (mut policy.type) value="target.value"}} name="replicationType">HDFS
+									<input type="radio" value="HDFS" checked={{if (eq policy.type 'HDFS') 'checked'}} onchange={{action "policyTypeChanged" value="target.value"}} name="replicationType">HDFS
 								</label>
 							</div>
 						</div>
@@ -61,7 +61,7 @@
 					</div>
 					{{#if (eq policy.type 'HIVE')}}
 						<div class="row">
-							<div class="col-xs-12">
+							<div class="col-xs-6">
 								<label class="control-label smaller-font">SELECT DATABASES</label>
 								<div>
 									<label class="radio-inline">
@@ -80,6 +80,16 @@
 										{{/each}}
 									</div>
 									{{/if}}
+							</div>
+							<div class="col-xs-6">
+								{{#if requestInProcess}}
+									{{spin-spinner lines=7 length=5 radius=5 width=3 left=0}} Fetching hive dbs..
+								{{/if}}
+								{{#if hiveError}}
+									<span class="text-danger">
+										Could not fetch Hive DBs. <a href {{action "getHiveDbs" preventDefault=true}}>Try Again</a>
+									</span>
+								{{/if}}
 							</div>
 						</div>
 					{{else}}

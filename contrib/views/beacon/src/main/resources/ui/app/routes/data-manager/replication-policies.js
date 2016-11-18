@@ -58,9 +58,12 @@ export default Ember.Route.extend({
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
     },
     savePolicy(policy){
+      this.controllerFor('data-manager.replication-policies').set('creationInProgress', true);
       this.get('beaconService').createPolicy(policy).done(()=>{
+        this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
         this.refresh();
       }).fail(()=>{
+        this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
         console.error("Policy creation failed");
       });
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
@@ -95,6 +98,9 @@ export default Ember.Route.extend({
     },
     didTransition() {
       this.get('breadcrumbService').showBreadcrumbs(this);
+    },
+    onError(error){
+      this.controllerFor('data-manager.replication-policies').set('error', error);
     },
     goToPage(params){
       this.transitionTo('data-manager.replication-policies', {

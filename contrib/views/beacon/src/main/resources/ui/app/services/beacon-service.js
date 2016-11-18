@@ -95,7 +95,7 @@ export default Ember.Service.extend({
   deletePolicy(policyName){
     var url = this.get('baseUrl') + '/policy/delete/' + policyName;
     return Ember.$.ajax({
-      type: "POST",
+      type: "DELETE",
       url: url,
       dataType: 'json'
     });
@@ -107,8 +107,8 @@ export default Ember.Service.extend({
       url: url
     });
   },
-  getAllInstances(){
-    var url = this.get('baseUrl') + '/policy/instances/list';
+  getAllInstances(policyName){
+    var url = this.get('baseUrl') + '/policy/instance/list/'+ policyName;
     return Ember.$.get(url);
   }
 });

@@ -16,6 +16,15 @@
 * limitations under the License.
 }}
 <div id="replicationPolicies">
+  {{#if showingInstances}}
+  <div class="clearfix">
+    <div class="replication-policies-title pull-left ">Instances</div>
+    <button type="button" class="btn btn-default btn-xs pull-right" name="button" {{action "backToPolicies"}}>
+      <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp; BACK TO POLICIES
+    </button>
+  </div>
+    {{#instance-table instances=instances policy=selectedPolicy}}{{/instance-table}}
+  {{else}}
   <div class="clearfix">
     <div class="replication-policies-title pull-left ">Replication Policies</div>
     <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
@@ -31,6 +40,7 @@
         <th>RUN TIME</th>
         <th>SERVICE</th>
         <th>DESTINATION</th>
+        <th>INSTANCES</th>
         <th>ACTIONS</th>
       </tr>
     </thead>
@@ -44,6 +54,9 @@
         <td>{{policy.runTime}}</td>
         <td>{{policy.type}}</td>
         <td>{{policy.targetCluster}}</td>
+        <td>
+          <a href {{action "viewInstances" policy.name preventDefault=true}}><i class="fa fa-list" aria-hidden="true"></i></a>
+        </td>
         <td>
           <div class="btn-group action-ellipsis">
             <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -92,4 +105,5 @@
       </div>
     </div>
   </div>
+  {{/if}}
 </div>

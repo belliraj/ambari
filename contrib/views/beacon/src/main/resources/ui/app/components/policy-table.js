@@ -18,6 +18,7 @@ import Ember from 'ember';
 import Constants from '../utils/constants';
 
 export default Ember.Component.extend({
+  beaconService : Ember.inject.service('beacon-service'),
   start : Ember.computed('offset', function(){
     if(!this.get('offset')){
       return 1;
@@ -52,6 +53,32 @@ export default Ember.Component.extend({
     },
     next(currentPage){
       this.sendAction('goToPage', {'offset' : (currentPage) * Constants.PAGINATION.pageSize});
+    },
+    schedule(name) {
+      this.sendAction('schedule', name);
+    },
+    suspend(name) {
+      this.sendAction('suspend', name);
+    },
+    resume(name) {
+        this.sendAction('resume', name);
+    },
+    delete(name) {
+      this.sendAction('delete', name);
+    },
+    viewInstances(policyName){
+      this.set('requestInProcess', true);
+      this.set('selectedPolicy', this.get('policies.entity').findBy('name', policyName));
+      this.get('beaconService').getAllInstances(policyName).done((response)=>{
+        this.set('requestInProcess', false);
+        this.set('showingInstances', true);
+        this.set('instances', response.instance);
+      }.bind(this)).fail(()=>{
+        this.set('requestInProcess', false);
+      }.bind(this));
+    },
+    backToPolicies(){
+      this.set('showingInstances', false);
     }
   }
 });

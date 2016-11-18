@@ -25,14 +25,20 @@
     <service-class>org.apache.ambari.contrib.view.beacon.BeaconViewService</service-class>
   </resource>
 
-  <parameter>
+  <!-- parameter>
     <name>beacon.service.uri</name>
     <description>Beacon service URI for the Beacon API.</description>
     <label>Beacon Service URI</label>
     <placeholder>http://sandbox.hortonworks.com:25000/beacon</placeholder>
     <cluster-config>oozie-site/oozie.base.url</cluster-config>
+  </parameter-->
+	<parameter>
+    <name>hive.rest.uri</name>
+    <description>Hive service uri</description>
+    <label>Hive Service URI</label>
+    <placeholder>http://sandbox.hortonworks.com:50111</placeholder>
+    <cluster-config>core-site/templeton.url</cluster-config>
   </parameter>
-
 
       <parameter>
         <name>webhdfs.url</name>
