@@ -131,5 +131,19 @@ export default Ember.Service.extend({
         reject(e);
       });
     });
+  },
+  getAllInstances(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/instance/list/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        Ember.$.get(url).done((instances)=>{
+          resolve(instances);
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
   }
 });

@@ -19,6 +19,7 @@ import Constants from '../utils/constants';
 
 export default Ember.Component.extend({
   beaconService : Ember.inject.service('beacon-service'),
+  remoteBeaconService : Ember.inject.service('remote-beacon-service'),
   start : Ember.computed('offset', function(){
     if(!this.get('offset')){
       return 1;
@@ -69,14 +70,14 @@ export default Ember.Component.extend({
     delete(policy) {
       this.sendAction('delete', policy);
     },
-    viewInstances(policyName){
+    viewInstances(policy){
       this.set('requestInProcess', true);
-      this.set('selectedPolicy', this.get('policies').findBy('name', policyName));
-      this.get('beaconService').getAllInstances(policyName).done((response)=>{
+      this.set('selectedPolicy', policy);
+      this.get('remoteBeaconService').getAllInstances(policy).then((response)=>{
         this.set('requestInProcess', false);
         this.set('showingInstances', true);
         this.set('instances', response.instance);
-      }.bind(this)).fail(()=>{
+      }.bind(this)).catch(()=>{
         this.set('requestInProcess', false);
       }.bind(this));
     },
