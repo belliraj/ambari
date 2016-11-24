@@ -36,16 +36,16 @@
       </div>
       <div class="row">
         <div class="col-xs-2">
-          <span class="smaller-font">{{localClusterDetails.name}}</span>
+          <span class="smaller-font">{{localAmbariCluster.name}}</span>
         </div>
         {{#if sourceRegistered}}
-        <div class="col-xs-5">
-          <label class="smaller-font">{{localClusterDetails.dataCenter}}</label>
-        </div>
+          <div class="col-xs-5">
+            <label class="smaller-font">{{beaconSourceCluster.dataCenter}}</label>
+          </div>
         {{else}}
-        <div class="col-xs-5">
-          {{input class="smaller-font" value= localClusterDetails.dataCenter}}
-        </div>
+          <div class="col-xs-5">
+            {{input class="smaller-font" value= localAmbariCluster.dataCenter}}
+          </div>
         {{/if}}
       </div>
     </div>
@@ -59,7 +59,7 @@
       </div>
     </nav>
     <div class="container-fluid" id="remote-clusters-list">
-      {{#each remoteClusters as |cluster index|}}
+      {{#each remoteClustersList as |cluster index|}}
       <div class="row">
         <div class="col-xs-2">
           <span class="smaller-font">NAME</span>
@@ -67,12 +67,14 @@
         <div class="col-xs-2">
           <span class="smaller-font">DATA CENTER</span>
         </div>
-        <div class="col-xs-2">
-          <span class="smaller-font">USER NAME</span>
-        </div>
-        <div class="col-xs-2">
-          <span class="smaller-font">PASSWORD</span>
-        </div>
+        {{#if (not (contains registeredClusters cluster))}}
+          <div class="col-xs-2">
+            <span class="smaller-font">USER NAME</span>
+          </div>
+          <div class="col-xs-2">
+            <span class="smaller-font">PASSWORD</span>
+          </div>
+        {{/if}}
         <div class="col-xs-3">
 
         </div>
@@ -81,17 +83,23 @@
         <div class="col-xs-2">
           <span class="smaller-font">{{cluster.name}}</span>
         </div>
-        <div class="col-xs-2">
-          {{input class="smaller-font" value=cluster.dataCenter}}
-        </div>
-        <div class="col-xs-2">
-          {{input class="smaller-font" value=cluster.username}}
-        </div>
-        <div class="col-xs-2">
-          {{input type="password" class="smaller-font" value= cluster.password}}
-        </div>
+        {{#if (contains registeredClusters cluster)}}
+          <div class="col-xs-2">
+            <label class="smaller-font">{{cluster.dataCenter}}</label>
+          </div>
+        {{else}}
+          <div class="col-xs-2">
+            {{input class="smaller-font" value=cluster.dataCenter}}
+          </div>
+          <div class="col-xs-2">
+            {{input class="smaller-font" value=cluster.username}}
+          </div>
+          <div class="col-xs-2">
+            {{input type="password" class="smaller-font" value= cluster.password}}
+          </div>
+        {{/if}}
         <div class="col-xs-3">
-          {{#if (contains sourceClusterPeers cluster)}}
+          {{#if (contains beaconSourceCluster.peersArray cluster)}}
             <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRED</button>
           {{else if (eq currentlyPaired.name cluster.name)}}
             <button type="button" class="smaller-font btn btn-success btn-xs" name="button">PAIRING</button>
@@ -101,12 +109,12 @@
         </div>
       </div>
       {{/each}}
-      {{#if statusMessage}}
-        <div class="row status-bar">
-          <span class="smaller-font">{{statusMessage}}</span>
-        </div>
-      {{/if}}
     </div>
+    {{#if statusMessage}}
+      <div class="row status-bar">
+        <span class="smaller-font">{{statusMessage}}</span>
+      </div>
+    {{/if}}
   </div>
 </div>
 {{yield}}

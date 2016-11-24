@@ -24,7 +24,7 @@ export default Ember.Service.extend({
     return Ember.$.get(url);
   },
   getClusterInfo(clusterName){
-    var url = this.get('baseUrl') + '/cluster/get/' + clusterName;
+    var url = this.get('baseUrl') + '/cluster/getEntity/' + clusterName;
     return Ember.$.get(url);
   },
   registerCluster (clusterName, clusterInfo){

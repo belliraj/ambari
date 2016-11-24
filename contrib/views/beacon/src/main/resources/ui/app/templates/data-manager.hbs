@@ -8,7 +8,7 @@
           {{#left-nav-bar currentCluster=model.currentCluster registeredClusters=model.registeredClusters}}{{/left-nav-bar}}
         </div>
         <div class="col-xs-10 padding0">
-            {{#if (gt model.registeredClusters.totalResults 1)}}
+            {{#if (gt model.registeredClusters.meta.totalResults 1)}}
             <div class="container-fluid" role="navigation">
               <div class="navbar-header">
                 <ol class="breadcrumb">

@@ -26,10 +26,10 @@ export default Ember.Component.extend({
     return parseInt(this.get('offset')) + 1;
   }),
   end : Ember.computed('start', function(){
-    return parseInt(this.get('start')) + parseInt(this.get('policies.entity').length) - 1;
+    return parseInt(this.get('start')) + parseInt(this.get('policies.length')) - 1;
   }),
-  noOfPages : Ember.computed('policies.totalResults', function(){
-    return this.get('policies.totalResults') / Constants.PAGINATION.pageSize;
+  noOfPages : Ember.computed('policies.meta.totalResults', function(){
+    return this.get('policies.meta.totalResults') / Constants.PAGINATION.pageSize;
   }),
   pages : Ember.computed('noOfPages', function(){
     var pages = Ember.A([]);
@@ -40,6 +40,9 @@ export default Ember.Component.extend({
   }),
   currentPage : Ember.computed('start', function(){
     return parseInt(this.get('start') / Constants.PAGINATION.pageSize) + 1;
+  }),
+  sourcePolicies : Ember.computed('policies.[]', function(){
+    return this.get('policies').filterBy('sourceCluster', this.get('beaconSourceCluster.name'));
   }),
   actions : {
     createPolicy(){
@@ -54,21 +57,21 @@ export default Ember.Component.extend({
     next(currentPage){
       this.sendAction('goToPage', {'offset' : (currentPage) * Constants.PAGINATION.pageSize});
     },
-    schedule(name) {
-      this.sendAction('schedule', name);
+    schedule(policy) {
+      this.sendAction('schedule', policy);
     },
-    suspend(name) {
-      this.sendAction('suspend', name);
+    suspend(policy) {
+      this.sendAction('suspend', policy);
     },
-    resume(name) {
-        this.sendAction('resume', name);
+    resume(policy) {
+        this.sendAction('resume', policy);
     },
-    delete(name) {
-      this.sendAction('delete', name);
+    delete(policy) {
+      this.sendAction('delete', policy);
     },
     viewInstances(policyName){
       this.set('requestInProcess', true);
-      this.set('selectedPolicy', this.get('policies.entity').findBy('name', policyName));
+      this.set('selectedPolicy', this.get('policies').findBy('name', policyName));
       this.get('beaconService').getAllInstances(policyName).done((response)=>{
         this.set('requestInProcess', false);
         this.set('showingInstances', true);

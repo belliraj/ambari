@@ -1,4 +1,3 @@
-import Ember from 'ember';
 /*
 *    Licensed to the Apache Software Foundation (ASF) under one or more
 *    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,18 @@ import Ember from 'ember';
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-export function contains(params/*, hash*/) {
-  var arr = params[0];
-  var elt = params[1];
-  if(!arr || !elt){
-    return false;
-  }
-  return !Ember.isEmpty(arr.findBy('name', elt.get('name')));
-  //console.error(params);
-  //return params;
-}
+import { moduleForModel, test } from 'ember-qunit';
 
-export default Ember.Helper.helper(contains);
+moduleForModel('application', 'Unit | Serializer | application', {
+  // Specify the other units that are required for this test.
+  needs: ['serializer:application']
+});
+
+// Replace this with your real tests.
+test('it serializes records', function(assert) {
+  let record = this.subject();
+
+  let serializedRecord = record.serialize();
+
+  assert.ok(serializedRecord);
+});

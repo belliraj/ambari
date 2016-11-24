@@ -17,12 +17,12 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  groupedClusters : Ember.computed('registeredClusters.entity.[]', function(){
+  groupedClusters : Ember.computed('registeredClusters.[]', function(){
     var groupedClusters = Ember.A([]);
-    this.get('registeredClusters.entity').forEach((cluster) => {
-      var item = groupedClusters.findBy('dataCenter', cluster.dataCenter);
+    this.get('registeredClusters').forEach((cluster) => {
+      var item = groupedClusters.findBy('dataCenter', cluster.get('dataCenter'));
       if(Ember.isEmpty(item)){
-        groupedClusters.pushObject({dataCenter : cluster.dataCenter, clusters : [cluster]});
+        groupedClusters.pushObject({dataCenter : cluster.get('dataCenter'), clusters : [cluster]});
       }else{
         item.clusters.pushObject(cluster);
       }

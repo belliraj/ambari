@@ -24,7 +24,7 @@ export default Ember.Component.extend({
     this.set('policy', {});
     this.set('policy.frequencyInSec', 86400);
     this.set('policy.type', 'HIVE');
-    this.set('policy.sourceCluster', this.get('currentCluster.name'));
+    this.set('policy.sourceCluster', this.get('beaconSourceCluster.name'));
     this.getHiveDbs();
     this.set('policy.aclOwner', this.get('userInfo').name);
     this.set('policy.aclGroup', this.get('userInfo').groupNames.join());
@@ -63,7 +63,6 @@ export default Ember.Component.extend({
         this.set('policy.sourceDir', this.get('policy.dataset'));
         this.set('policy.targetDir', this.get('policy.dataset'));
       }
-      this.set('policy.frequencyInSec', 120);
       this.sendAction("savePolicy", this.get('policy'));
     },
     changeSchedule(type){

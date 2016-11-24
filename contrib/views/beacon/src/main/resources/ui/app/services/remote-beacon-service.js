@@ -18,6 +18,7 @@ import Ember from 'ember';
 
 export default Ember.Service.extend({
   baseUrl : Ember.ENV.API_URL + '/remoteBeaconService/api/beacon',
+  beaconService : Ember.inject.service('beacon-service'),
 
   registerCluster (clusterName, clusterInfo, beaconEndpoint){
     var data = '';
@@ -35,5 +36,100 @@ export default Ember.Service.extend({
   getRegisteredClusters(beaconEndpoint){
     var url = this.get('baseUrl') + '/cluster/list' + '?beaconEndpoint=' + beaconEndpoint;
     return Ember.$.get(url);
+  },
+  createPolicy(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/submit/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        var data = '';
+        Object.keys(policy).forEach((key)=>{
+          data = data+key+'='+policy[key]+'\n';
+        });
+        Ember.$.ajax({
+          type: "POST",
+          url: url,
+          data: data,
+          dataType: 'json'
+        }).done(()=>{
+          resolve();
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
+  },
+  schedulePolicy(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/schedule/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        Ember.$.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json'
+        }).done(()=>{
+          resolve();
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
+  },
+  suspendPolicy(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/suspend/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        Ember.$.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json'
+        }).done(()=>{
+          resolve();
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
+  },
+  resumePolicy(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/resume/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        Ember.$.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json'
+        }).done(()=>{
+          resolve();
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
+  },
+  deletePolicy(policy){
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
+        var url = this.get('baseUrl') + '/policy/delete/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
+        Ember.$.ajax({
+          type: "DELETE",
+          url: url,
+          dataType: 'json'
+        }).done(()=>{
+          resolve();
+        }).fail((e)=>{
+          reject(e);
+        });
+      }.bind(this)).fail((e)=>{
+        reject(e);
+      });
+    });
   }
 });

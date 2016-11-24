@@ -31,10 +31,8 @@ export default Ember.Route.extend({
   },
 
   model(){
-    var currentCluster = this.modelFor('data-manager').currentCluster;
-    var remoteClustersPromise = this.get('beaconViewService').getRemoteClusters();
     return Ember.RSVP.hash({
-      remoteClusters : remoteClustersPromise,
+      remoteClusters : this.store.query('ambari-cluster', {remote : true})
     });
   },
 
@@ -52,10 +50,10 @@ export default Ember.Route.extend({
       this.controllerFor('data-manager.replication-setup').set('status', status);
     },
     update(){
-      this.get('beaconService').getRegisteredClusters().done((registeredClusters) => {
-        this.controllerFor('data-manager.replication-setup').set('model.registeredClusters', registeredClusters);
-        Ember.getOwner(this).lookup('route:data-manager').controller.set('model.registeredClusters', registeredClusters);
-      }.bind(this));
+      this.store.query('cluster', {'fields':'peers'}).then(()=>{
+        this.controllerFor('data-manager.replication-setup').set('model.registeredClusters', this.store.peekAll('cluster'));
+        Ember.getOwner(this).lookup('route:data-manager').controller.set('model.registeredClusters', this.store.peekAll('cluster'));
+      });
     },
     didTransition(){
       this.get('breadcrumbService').showBreadcrumbs(this);

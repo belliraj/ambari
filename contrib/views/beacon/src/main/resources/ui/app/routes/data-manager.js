@@ -24,20 +24,17 @@ export default Ember.Route.extend({
     if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
       return;
     }
-    if(model.registeredClusters.totalResults > 1 && model.policies.totalResults >= 0){
+    if(model.registeredClusters.get('meta').totalResults > 1 && model.policies.get('meta').totalResults >= 0){
       this.transitionTo('data-manager.replication-policies');
     } else {
       model.showInitialLaunch = true;
     }
   },
   model(){
-    var clusterRegisteredPromise = this.get('beaconService').getRegisteredClusters();
-    var policiesPromise = this.get('beaconService').getPolicies();
-    var currentClusterPromise = this.get('beaconViewService').getLocalClusterInfo();
     return Ember.RSVP.hash({
-      registeredClusters : clusterRegisteredPromise,
-      policies : policiesPromise,
-      currentCluster : currentClusterPromise
+      registeredClusters : this.store.query('cluster', {'fields':'peers'}),//clusterRegisteredPromise,
+      policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime'}),
+      currentCluster : this.store.queryRecord('ambari-cluster',{})
     });
   },
   setupController: function(controller, model) {

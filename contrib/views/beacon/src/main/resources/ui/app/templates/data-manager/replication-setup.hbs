@@ -21,6 +21,8 @@
     {{error.message}}
   </div>
   {{/if}}
-  {{cluster-pairing-setup currentCluster=model.currentCluster remoteClusters=model.remoteClusters registeredClusters=model.registeredClusters update="update" onError="onError" showStatus="showStatus"}}
+  {{cluster-pairing-setup localAmbariCluster=model.currentCluster remoteClusters=model.remoteClusters
+    registeredClusters=model.registeredClusters update="update" onError="onError"
+    showStatus="showStatus"}}
 </div>
 {{outlet}}

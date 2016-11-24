@@ -45,12 +45,12 @@
       </tr>
     </thead>
     <tbody>
-      {{#each policies.entity as |policy|}}
+      {{#each sourcePolicies as |policy|}}
       <tr>
         <td class="{{policy.status}}">{{policy.status}}</td>
         <td>{{policy.name}}</td>
         <td>{{policy.lastRun}}</td>
-        <td>{{policy.schedule}}</td>
+        <td>{{policy.frequency}}</td>
         <td>{{policy.runTime}}</td>
         <td>{{policy.type}}</td>
         <td>{{policy.targetCluster}}</td>
@@ -61,11 +61,11 @@
           <div class="btn-group action-ellipsis">
             <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
             <ul class="dropdown-menu">
-              <li {{action 'schedule' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Run Now</a></li>
-              <li {{action 'suspend' policy.name}} class='{{if (or (eq policy.status "SUBMITTED")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Suspend</a></li>
-              <li {{action 'resume' policy.name}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUBMITTED")) "disabled-elt"}}'><a>Resume</a></li>
+              <li {{action 'schedule' policy}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Run Now</a></li>
+              <li {{action 'suspend' policy}} class='{{if (or (eq policy.status "SUBMITTED")(eq policy.status "SUSPENDED")) "disabled-elt"}}'><a>Suspend</a></li>
+              <li {{action 'resume' policy}} class='{{if (or (eq policy.status "RUNNING")(eq policy.status "SUBMITTED")) "disabled-elt"}}'><a>Resume</a></li>
               <li role="separator" class="divider"></li>
-              <li {{action 'delete' policy.name}}><a>Delete</a></li>
+              <li {{action 'delete' policy}}><a>Delete</a></li>
             </ul>
           </div>
         </td>
@@ -77,7 +77,7 @@
     <div class="row">
       <div class="pull-right">
         <div class="info">
-          Showing {{start}} to {{end}} of {{policies.totalResults}} records
+          Showing {{start}} to {{end}} of {{policies.meta.totalResults}} records
         </div>
         <div class="pages btn-group btn-group-sm" role="group" aria-label="buttons">
           {{#if (gt offset 1)}}
@@ -96,7 +96,7 @@
                 </ul>
             </div>
           </div>
-          {{#if (lt end policies.totalResults)}}
+          {{#if (lt end policies.meta.totalResults)}}
             <button {{action 'next' currentPage}} type="button" class="btn btn-default"> Next </button>
           {{else}}
             <button type="button" class="btn btn-default disabled"> Next </button>

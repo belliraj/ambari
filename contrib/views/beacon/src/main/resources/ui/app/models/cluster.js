@@ -1,4 +1,3 @@
-import Ember from 'ember';
 /*
 *    Licensed to the Apache Software Foundation (ASF) under one or more
 *    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,23 @@ import Ember from 'ember';
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-export function contains(params/*, hash*/) {
-  var arr = params[0];
-  var elt = params[1];
-  if(!arr || !elt){
-    return false;
-  }
-  return !Ember.isEmpty(arr.findBy('name', elt.get('name')));
-  //console.error(params);
-  //return params;
-}
+import DS from 'ember-data';
 
-export default Ember.Helper.helper(contains);
+export default DS.Model.extend({
+  name : DS.attr('string'),
+  dataCenter  : DS.attr('string'),
+  fsEndpoint : DS.attr('string'),
+  hsEndpoint : DS.attr('string'),
+  beaconEndpoint : DS.attr('string'),
+  peers : DS.attr(),
+  peersArray : Ember.computed('peers', function(){
+    var peerNames = this.get('peers');
+    var peers = [];
+    if(peerNames && peerNames.length > 0){
+      peerNames.forEach((peer)=>{
+        peers.push({'name':peer});
+      });
+    }
+    return peers;
+  })
+});

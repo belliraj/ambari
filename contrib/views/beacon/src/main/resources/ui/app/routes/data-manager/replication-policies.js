@@ -20,6 +20,7 @@ import Constants from '../../utils/constants';
 export default Ember.Route.extend({
   beaconService : Ember.inject.service('beacon-service'),
   beaconViewService : Ember.inject.service('beacon-view-service'),
+  remoteBeaconService : Ember.inject.service('remote-beacon-service'),
   breadcrumbService : Ember.inject.service('breadcrumb-service'),
   queryParams : {
     orderBy : {refreshModel : true},
@@ -28,22 +29,12 @@ export default Ember.Route.extend({
     numResults : {refreshModel : true}
   },
   afterModel(model){
-    var registeredCluster = this.modelFor('data-manager').registeredClusters.entity;
-    model.currentCluster = registeredCluster.findBy('name',this.modelFor('data-manager').currentCluster.name);
-    if(model.currentCluster &&  model.currentCluster.peers){
-      var peerNames = model.currentCluster.peers.split(",");
-      var peers = [];
-      peerNames.forEach((name) =>{
-        peers.pushObject({'name' : name});
-      }, this);
-      model.pairedClusters = peers;
-    }else{
-      model.pairedClusters = [];
-    }
+    var registeredClusters = this.modelFor('data-manager').registeredClusters;
+    model.beaconSourceCluster =  this.store.peekRecord('cluster', this.modelFor('data-manager').currentCluster.get('name'));
   },
   model(params){
     return Ember.RSVP.hash({
-       policies : this.get('beaconService').getPolicies(params),
+       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime'}),
        userInfo : this.get('beaconViewService').getUserInfo()
     });
   },
@@ -59,41 +50,42 @@ export default Ember.Route.extend({
     },
     savePolicy(policy){
       this.controllerFor('data-manager.replication-policies').set('creationInProgress', true);
-      this.get('beaconService').createPolicy(policy).done(()=>{
+      this.get('remoteBeaconService').createPolicy(policy).then(()=>{
         this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
         this.refresh();
-      }).fail(()=>{
+      }).catch((e)=>{
+        console.error(e);
         this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
         console.error("Policy creation failed");
       });
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
     },
-    schedule(name) {
-      this.get('beaconService').schedulePolicy(name).done(()=>{
+    schedule(policy) {
+      this.get('remoteBeaconService').schedulePolicy(policy).then(()=>{
         this.refresh();
-      }).fail(()=>{
-        console.error("Policy suspend - failed");
+      }).catch((e)=>{
+        console.error("Policy suspend - failed", e);
       });
     },
-    suspend(name) {
-      this.get('beaconService').suspendPolicy(name).done(()=>{
+    suspend(policy) {
+      this.get('remoteBeaconService').suspendPolicy(policy).then(()=>{
         this.refresh();
-      }).fail(()=>{
-        console.error("Policy suspend - failed");
+      }).catch((e)=>{
+        console.error("Policy suspend - failed", e);
       });
     },
-    resume(name) {
-      this.get('beaconService').resumePolicy(name).done(()=>{
+    resume(policy) {
+      this.get('remoteBeaconService').resumePolicy(policy).then(()=>{
         this.refresh();
-      }).fail(()=>{
-        console.error("Policy resume - failed");
+      }).catch((e)=>{
+        console.error("Policy resume - failed", e);
       });
     },
-    delete(name) {
-      this.get('beaconService').deletePolicy(name).done(()=>{
+    delete(policy) {
+      this.get('remoteBeaconService').deletePolicy(policy).then(()=>{
         this.refresh();
-      }).fail(()=>{
-        console.error("Policy delete - failed");
+      }).catch((e)=>{
+        console.error("Policy delete - failed", e);
       });
     },
     didTransition() {
