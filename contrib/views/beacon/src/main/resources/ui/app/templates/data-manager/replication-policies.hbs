@@ -30,7 +30,7 @@
     policies=model.policies createPolicy="createPolicy"
     schedule="schedule" suspend="suspend" resume="resume" delete="delete"
     goToPage="goToPage" offset=offset orderBy=orderBy
-    sortOrder=sortOrder numResults=numResults onError="onError"}}{{/policy-table}}
+    sortOrder=sortOrder numResults=numResults onError="onError" type='source'}}{{/policy-table}}
 {{else if (not createPolicyShown)}}
 <div class="no-replication-policy">
   <span>No replication policies created.<br/>Create first replication policy.</span>

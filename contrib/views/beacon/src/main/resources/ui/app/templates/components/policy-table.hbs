@@ -26,8 +26,12 @@
     {{#instance-table instances=instances policy=selectedPolicy}}{{/instance-table}}
   {{else}}
   <div class="clearfix">
-    <div class="replication-policies-title pull-left ">Replication Policies</div>
-    <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
+    {{#if (eq type 'source')}}
+      <div class="replication-policies-title pull-left ">Replication Policies</div>
+      <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
+    {{else}}
+      <div class="replication-policies-title pull-left ">Incoming Policies</div>
+    {{/if}}
   </div>
 
   <table id="replication-policies-list" class="table listing table-striped table-hover replication-policies-list" cellspacing="0" width="100%">
@@ -45,7 +49,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each sourcePolicies as |policy|}}
+      {{#each policyList as |policy|}}
       <tr>
         <td class="{{policy.status}}">{{policy.status}}</td>
         <td>{{policy.name}}</td>

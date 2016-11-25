@@ -45,6 +45,16 @@ export default Ember.Component.extend({
   sourcePolicies : Ember.computed('policies.[]', function(){
     return this.get('policies').filterBy('sourceCluster', this.get('beaconSourceCluster.name'));
   }),
+  incomingPolicies : Ember.computed('policies.[]', function(){
+    return this.get('policies').filterBy('targetCluster', this.get('beaconSourceCluster.name'));
+  }),
+  initialize : function(){
+    if(this.get('type') === 'source'){
+      this.set('policyList', this.get('sourcePolicies'));
+    }else{
+      this.set('policyList', this.get('incomingPolicies'))
+    }
+  }.on('init'),
   actions : {
     createPolicy(){
       this.sendAction('createPolicy');

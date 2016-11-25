@@ -21,9 +21,10 @@ export default Ember.Route.extend({
   breadcrumbService : Ember.inject.service('breadcrumb-service'),
 
   model(){
-      return Ember.RSVP.hash({
-         policies : this.get('beaconService').getIncomingPolicies()
-      });
+    return Ember.RSVP.hash({
+       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime'}),
+       beaconSourceCluster : this.store.peekRecord('cluster', this.modelFor('data-manager').currentCluster.get('name'))
+    });
   },
   setupController: function(controller, model) {
     this._super(controller, model);

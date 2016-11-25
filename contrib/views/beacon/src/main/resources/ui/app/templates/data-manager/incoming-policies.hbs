@@ -16,39 +16,10 @@
 * limitations under the License.
 }}
 <div id="incomingPolicies">
-  <div class="clearfix">
-    <div class="replication-policies-title pull-left ">Incoming Policies</div>
-    <button type="button" class="btn btn-success pull-right" name="button" {{action 'createPolicy'}}>+ CREATE REPLICATION POLICY</button>
-  </div>
-
-  <table id="replication-policies-list" class="table listing table-striped table-hover replication-policies-list" cellspacing="0" width="100%">
-    <thead>
-      <tr>
-        <th>STATUS</th>
-        <th>POLICY NAME</th>
-        <th>LAST GOOD</th>
-        <th>SCHEDULE</th>
-        <th>RUN TIME</th>
-        <th>SERVICE</th>
-        <th>DESTINATION</th>
-        <th>ACTIONS</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each model.policies.entity as |policy|}}
-      <tr>
-        <td>{{policy.status}}</td>
-        <td>{{policy.name}}</td>
-        <td>{{policy.lastRun}}</td>
-        <td>{{policy.schedule}}</td>
-        <td>{{policy.runTime}}</td>
-        <td>{{policy.type}}</td>
-        <td>{{policy.targetCluster}}</td>
-        <td><i class="fa fa-ellipsis-v" aria-hidden="true" aria-expanded="false"></i>
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
+  {{#policy-table beaconSourceCluster=model.beaconSourceCluster
+    policies=model.policies createPolicy="createPolicy"
+    schedule="schedule" suspend="suspend" resume="resume" delete="delete"
+    goToPage="goToPage" offset=offset orderBy=orderBy
+    sortOrder=sortOrder numResults=numResults onError="onError" type='incoming'}}{{/policy-table}}
 </div>
 {{outlet}}
