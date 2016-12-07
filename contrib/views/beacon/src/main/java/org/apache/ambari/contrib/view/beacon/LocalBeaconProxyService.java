@@ -23,7 +23,7 @@ import org.apache.ambari.view.ViewContext;
 
 public class LocalBeaconProxyService extends BeaconProxyService{
 	private static final String SERVICE_URI_PROP = "beacon.service.uri";
-	private static final String DEFAULT_SERVICE_URI = "http://localhost:25000/beacon";
+	private static final String DEFAULT_SERVICE_URI = "http://b7001.ambari.vagrant.test:25000";
 	private final int BEACON_URI_PORTION_LEN = "proxy/beaconService".length();
 
 	public LocalBeaconProxyService(ViewContext context) {

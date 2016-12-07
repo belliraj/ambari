@@ -48,7 +48,7 @@ public class BeaconViewService {
 			.getLogger(BeaconViewService.class);
 	private final String[] configTypes = { "core-site", "hive-site" };
 	private final static String HIVE_SERVICE_URI_PROP = "hive.rest.uri";
-	private static final String DEFAULT_HIVE_SERVICE_URI = "http://localhost:50111";
+	private static final String DEFAULT_HIVE_SERVICE_URI = "http://b7001.ambari.vagrant.test:50111";
 	private RemoteAmbariDelegate remoteAmbariDelegate;
 	private AmbariDelegate ambariDelegate;
 	private AmbariUtils ambariUtils;
