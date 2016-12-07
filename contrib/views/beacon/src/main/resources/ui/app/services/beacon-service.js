@@ -18,21 +18,22 @@ import Ember from 'ember';
 import Constants from '../utils/constants';
 
 export default Ember.Service.extend({
-  baseUrl : Ember.ENV.API_URL + '/beaconService/api/beacon',
-  getRegisteredClusters (){
-    var url = this.get('baseUrl') + '/cluster/list';
+  baseUrl: `${Ember.ENV.API_URL}/beaconService/api/beacon`,
+
+  getRegisteredClusters() {
+    var url = `${this.get('baseUrl')}/cluster/list`;
     return Ember.$.get(url);
   },
-  getClusterInfo(clusterName){
-    var url = this.get('baseUrl') + '/cluster/getEntity/' + clusterName;
+  getClusterInfo(clusterName) {
+    var url = `${this.get('baseUrl')}/cluster/getEntity/${clusterName}`;
     return Ember.$.get(url);
   },
-  registerCluster (clusterName, clusterInfo){
-    var data = '';
-    Object.keys(clusterInfo).forEach((key)=>{
-      data = data+key+'='+clusterInfo[key]+'\n';
-    });
-    var url = this.get('baseUrl') + '/cluster/submit/' + clusterName;
+  registerCluster(clusterName, clusterInfo) {
+    var url = `${this.get('baseUrl')}/cluster/submit/${clusterName}`;
+    var data =
+      Object.keys(clusterInfo)
+        .reduce((accumulatedString, cKey) => `${accumulatedString}${cKey}=${clusterInfo[cKey]}\n`, '');
+
     return Ember.$.ajax({
       type: "POST",
       url: url,
@@ -40,27 +41,21 @@ export default Ember.Service.extend({
       dataType: 'text'
     });
   },
-  getPolicies(params){
-    if(!params){
-      params = {};
-    }
-    if(!params.offset){
-      params.offset = 0;
-    }
-    params.pageSize = Constants.PAGINATION.pageSize;
-    var url = this.get('baseUrl') + '/policy/list?offset='+params.offset+'&numResults='+params.pageSize;
+  getPolicies({offset = 0}) {
+    const pageSize = Constants.PAGINATION.pageSize;
+    var url = `${this.get('baseUrl')}/policy/list?offset=${offset}&numResults=${pageSize}`;
     return Ember.$.get(url);
   },
-  getIncomingPolicies(){
-    var url = this.get('baseUrl') + '/policy/incoming/list';
+  getIncomingPolicies() {
+    var url = `${this.get('baseUrl')}/policy/incoming/list`;
     return Ember.$.get(url);
   },
-  createPolicy(policy){
-    var url = this.get('baseUrl') + '/policy/submit/' + policy.name;
-    var data = '';
-    Object.keys(policy).forEach((key)=>{
-      data = data+key+'='+policy[key]+'\n';
-    });
+  createPolicy(policy) {
+    var url = `${this.get('baseUrl')}/policy/submit/${policy.name}`;
+    var data =
+      Object.keys(clusterInfo)
+        .reduce((accumulatedString, cKey) => `${accumulatedString}${cKey}=${policy[cKey]}\n`, '');
+
     return Ember.$.ajax({
       type: "POST",
       url: url,
@@ -68,47 +63,47 @@ export default Ember.Service.extend({
       dataType: 'json'
     });
   },
-  schedulePolicy(policyName){
-    var url = this.get('baseUrl') + '/policy/schedule/' + policyName;
+  schedulePolicy(policyName) {
+    var url = `${this.get('baseUrl')}/policy/schedule/${policyName}`;
     return Ember.$.ajax({
       type: "POST",
       url: url,
       dataType: 'json'
     });
   },
-  suspendPolicy(policyName){
-    var url = this.get('baseUrl') + '/policy/suspend/' + policyName;
+  suspendPolicy(policyName) {
+    var url = `${this.get('baseUrl')}/policy/suspend/${policyName}`;
     return Ember.$.ajax({
       type: "POST",
       url: url,
       dataType: 'json'
     });
   },
-  resumePolicy(policyName){
-    var url = this.get('baseUrl') + '/policy/resume/' + policyName;
+  resumePolicy(policyName) {
+    var url = `${this.get('baseUrl')}/policy/resume/${policyName}`;
     return Ember.$.ajax({
       type: "POST",
       url: url,
       dataType: 'json'
     });
   },
-  deletePolicy(policyName){
-    var url = this.get('baseUrl') + '/policy/delete/' + policyName;
+  deletePolicy(policyName) {
+    var url = `${this.get('baseUrl')}/policy/delete/${policyName}`;
     return Ember.$.ajax({
       type: "DELETE",
       url: url,
       dataType: 'json'
     });
   },
-  pairClusters(remoteClusterName, remoteBeaconEndpoint){
-    var url = this.get('baseUrl') + '/cluster/pair?remoteBeaconEndpoint=' + remoteBeaconEndpoint + '&remoteClusterName=' + remoteClusterName;
+  pairClusters(remoteClusterName, remoteBeaconEndpoint) {
+    var url = `${this.get('baseUrl')}/cluster/pair?remoteBeaconEndpoint=${remoteBeaconEndpoint}&remoteClusterName=${remoteClusterName}`;
     return Ember.$.ajax({
       type: "POST",
       url: url
     });
   },
-  getAllInstances(policyName){
-    var url = this.get('baseUrl') + '/policy/instance/list/'+ policyName;
+  getAllInstances(policyName) {
+    var url = `${this.get('baseUrl')}/policy/instance/list/${policyName}`;
     return Ember.$.get(url);
   }
 });

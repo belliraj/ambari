@@ -17,15 +17,16 @@
 import Ember from 'ember';
 
 export default Ember.Service.extend({
-  baseUrl : Ember.ENV.API_URL + '/remoteBeaconService/api/beacon',
-  beaconService : Ember.inject.service('beacon-service'),
+  baseUrl: Ember.ENV.API_URL + '/remoteBeaconService/api/beacon',
+  beaconService: Ember.inject.service('beacon-service'),
 
-  registerCluster (clusterName, clusterInfo, beaconEndpoint){
-    var data = '';
-    Object.keys(clusterInfo).forEach((key)=>{
-      data = data+key+'='+clusterInfo[key]+'\n';
-    });
-    var url = this.get('baseUrl') + '/cluster/submit/' + clusterName + '?beaconEndpoint=' + beaconEndpoint;
+  registerCluster(clusterName, clusterInfo, beaconEndpoint) {
+    var data =
+      Object
+        .keys(clusterInfo)
+        .reduce((accumulatedString, cKey) => `${accumulatedString}${cKey}=${clusterInfo[cKey]}\n`, '');
+
+    var url = `${this.get('baseUrl')}/cluster/submit/${clusterName}?beaconEndpoint=${beaconEndpoint}`;
     return Ember.$.ajax({
       type: "POST",
       url: url,
@@ -33,117 +34,134 @@ export default Ember.Service.extend({
       dataType: 'text'
     });
   },
-  getRegisteredClusters(beaconEndpoint){
-    var url = this.get('baseUrl') + '/cluster/list' + '?beaconEndpoint=' + beaconEndpoint;
+  getRegisteredClusters(beaconEndpoint) {
+    var url = `${this.get('baseUrl')}/cluster/list?beaconEndpoint=${beaconEndpoint}`;
     return Ember.$.get(url);
   },
-  createPolicy(policy){
+  createPolicy(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/submit/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        var data = '';
-        Object.keys(policy).forEach((key)=>{
-          data = data+key+'='+policy[key]+'\n';
-        });
-        Ember.$.ajax({
-          type: "POST",
-          url: url,
-          data: data,
-          dataType: 'json'
-        }).done(()=>{
-          resolve();
-        }).fail((e)=>{
+      this.get('beaconService')
+        .getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/submit/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+          var data =
+            Object
+              .keys(policy)
+              .reduce((accumulatedString, cKey) => `${accumulatedString}${cKey}=${policy[cKey]}\n`, '');
+
+          Ember.$.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            dataType: 'json'
+          }).done(() => {
+            resolve();
+          }).fail((e) => {
+            reject(e);
+          });
+        })
+        .fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   },
-  schedulePolicy(policy){
+  schedulePolicy(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/schedule/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        Ember.$.ajax({
-          type: "POST",
-          url: url,
-          dataType: 'json'
-        }).done(()=>{
-          resolve();
-        }).fail((e)=>{
+      this.get('beaconService')
+        .getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/schedule/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+
+          Ember.$.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json'
+          }).done(() => {
+            resolve();
+          }).fail((e) => {
+            reject(e);
+          });
+        }).fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   },
-  suspendPolicy(policy){
+  suspendPolicy(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/suspend/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        Ember.$.ajax({
-          type: "POST",
-          url: url,
-          dataType: 'json'
-        }).done(()=>{
-          resolve();
-        }).fail((e)=>{
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/suspend/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+
+          Ember.$.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json'
+          }).done(() => {
+            resolve();
+          }).fail((e) => {
+            reject(e);
+          });
+        }).fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   },
-  resumePolicy(policy){
+  resumePolicy(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/resume/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        Ember.$.ajax({
-          type: "POST",
-          url: url,
-          dataType: 'json'
-        }).done(()=>{
-          resolve();
-        }).fail((e)=>{
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/resume/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+
+          Ember.$.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json'
+          }).done(() => {
+            resolve();
+          }).fail((e) => {
+            reject(e);
+          });
+        }).fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   },
-  deletePolicy(policy){
+  deletePolicy(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/delete/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        Ember.$.ajax({
-          type: "DELETE",
-          url: url,
-          dataType: 'json'
-        }).done(()=>{
-          resolve();
-        }).fail((e)=>{
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/delete/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+
+          Ember.$.ajax({
+            type: "DELETE",
+            url: url,
+            dataType: 'json'
+          }).done(() => {
+            resolve();
+          }).fail((e) => {
+            reject(e);
+          });
+        }).fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   },
-  getAllInstances(policy){
+  getAllInstances(policy) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('beaconService').getClusterInfo(policy.get('targetCluster')).done((clusterInfo)=>{
-        var url = this.get('baseUrl') + '/policy/instance/list/' + policy.get('name') + '?beaconEndpoint=' + clusterInfo.beaconEndpoint;
-        Ember.$.get(url).done((instances)=>{
-          resolve(instances);
-        }).fail((e)=>{
+      this.get('beaconService').getClusterInfo(policy.get('targetCluster'))
+        .done((clusterInfo) => {
+          var url = `${this.get('baseUrl')}/policy/instance/list/${policy.get('name')}?beaconEndpoint=${clusterInfo.beaconEndpoint}`;
+
+          Ember.$.get(
+            url
+          ).done((instances) => {
+            resolve(instances);
+          }).fail((e) => {
+            reject(e);
+          });
+        }).fail((e) => {
           reject(e);
         });
-      }.bind(this)).fail((e)=>{
-        reject(e);
-      });
     });
   }
 });

@@ -18,17 +18,18 @@ import Ember from 'ember';
 import Constants from '../utils/constants';
 
 export default Ember.Service.extend({
-  baseUrl : Ember.ENV.API_URL,
-  getLocalClusterInfo(){
-    var url = this.get('baseUrl') + '/localClusterDetails';
+  baseUrl: Ember.ENV.API_URL,
+
+  getLocalClusterInfo() {
+    var url = `${this.get('baseUrl')}/localClusterDetails`;
     return Ember.$.get(url);
   },
-  getUserInfo(){
-    var url = this.get('baseUrl') + '/getUserInfo';
+  getUserInfo() {
+    var url = `${this.get('baseUrl')}/getUserInfo`;
     return Ember.$.get(url);
   },
-  getRemoteClusterInfo(ambariUrl, auth){
-    var url = this.get('baseUrl') + '/remoteClusterDetails?ambariUrl=' + ambariUrl;
+  getRemoteClusterInfo(ambariUrl, auth) {
+    var url = `${this.get('baseUrl')}/remoteClusterDetails?ambariUrl=${ambariUrl}`;
     return Ember.$.ajax({
       type: "POST",
       url: url,
@@ -36,12 +37,12 @@ export default Ember.Service.extend({
       dataType: 'json'
     });
   },
-  getRemoteClusters(){
-    var url = this.get('baseUrl') + '/listRemoteClusters';
+  getRemoteClusters() {
+    var url = `${this.get('baseUrl')}/listRemoteClusters`;
     return Ember.$.get(url);
   },
-  getHiveDbs(){
-    var url = this.get('baseUrl') + '/hiveDBs';
+  getHiveDbs() {
+    var url = `${this.get('baseUrl')}/hiveDBs`;
     return Ember.$.get(url);
   }
 });
