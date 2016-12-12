@@ -83,13 +83,15 @@ export default Ember.Component.extend({
     viewInstances(policy){
       this.set('requestInProcess', true);
       this.set('selectedPolicy', policy);
-      this.get('remoteBeaconService').getAllInstances(policy).then((response)=>{
-        this.set('requestInProcess', false);
-        this.set('showingInstances', true);
-        this.set('instances', response.instance);
-      }.bind(this)).catch(()=>{
-        this.set('requestInProcess', false);
-      }.bind(this));
+      this.get('remoteBeaconService')
+        .getAllInstances(policy)
+        .then((response)=>{
+          this.set('requestInProcess', false);
+          this.set('showingInstances', true);
+          this.set('instances', response.instance);
+        }).catch(()=>{
+          this.set('requestInProcess', false);
+        });
     },
     backToPolicies(){
       this.set('showingInstances', false);
