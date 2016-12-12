@@ -76,7 +76,7 @@ public class BeaconViewService {
 		return new RemoteBeaconProxyService(viewContext);
 	}
 
-	@Path("/fileServices")
+	@Path("fileServices")
 	public FileServices fileServices() {
 		return new FileServices(viewContext);
 	}

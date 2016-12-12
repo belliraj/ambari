@@ -16,7 +16,7 @@
  */
 /* jshint node: true */
 
-module.exports = function(environment) {
+module.exports = function (environment) {
   var ENV = {
     modulePrefix: 'data-manager',
     environment: environment,
@@ -27,8 +27,8 @@ module.exports = function(environment) {
         // Here you can enable experimental features on an ember canary build
         // e.g. 'with-controller': true
       },
-      API_URL : "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy",
-      FILE_API_URL : "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy/fileServices"
+      API_URL: "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy",
+      FILE_API_URL: "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy/fileServices"
     },
 
     APP: {
@@ -37,7 +37,7 @@ module.exports = function(environment) {
     }
   };
   ENV['ember-cli-mirage'] = {
-     enabled: false
+    enabled: false
   }
   if (environment === 'development') {
     ENV.locationType = 'hash';
@@ -60,7 +60,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-      ENV.locationType = 'hash';
+    ENV.locationType = 'hash';
   }
 
   return ENV;

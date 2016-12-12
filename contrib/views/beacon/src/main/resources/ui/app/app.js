@@ -30,9 +30,9 @@ App = Ember.Application.extend({
 });
 
 Ember.$.ajaxSetup({
-  beforeSend: function(xhr) {
+  beforeSend: function (xhr) {
     xhr.setRequestHeader("X-Requested-By", 'Beacon-View');
-    xhr.setRequestHeader("Custom-Content-Type","application/json");
+    xhr.setRequestHeader("Custom-Content-Type", "application/json");
   }
 });
 

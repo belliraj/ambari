@@ -17,40 +17,40 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-  beaconViewService : Ember.inject.service('beacon-view-service'),
-  beaconService : Ember.inject.service('beacon-service'),
-  breadcrumbService : Ember.inject.service('breadcrumb-service'),
+  beaconViewService: Ember.inject.service('beacon-view-service'),
+  beaconService: Ember.inject.service('beacon-service'),
+  breadcrumbService: Ember.inject.service('breadcrumb-service'),
   redirect(model) {
-    if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
+    if (this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/') {
       return;
     }
-    if(model.registeredClusters.get('meta').totalResults > 1 && model.policies.get('meta').totalResults >= 0){
+    if (model.registeredClusters.get('meta').totalResults > 1 && model.policies.get('meta').totalResults >= 0) {
       this.transitionTo('data-manager.replication-policies');
     } else {
       model.showInitialLaunch = true;
     }
   },
-  model(){
+  model() {
     return Ember.RSVP.hash({
-      registeredClusters : this.store.query('cluster', {'fields':'peers'}),//clusterRegisteredPromise,
-      policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime'}),
-      currentCluster : this.store.queryRecord('ambari-cluster',{})
+      registeredClusters: this.store.query('cluster', { 'fields': 'peers' }),//clusterRegisteredPromise,
+      policies: this.store.query('policy', { 'fields': 'tags,clusters,frequency,starttime,endtime' }),
+      currentCluster: this.store.queryRecord('ambari-cluster', {})
     });
   },
-  setupController: function(controller, model) {
+  setupController: function (controller, model) {
     this._super(controller, model);
     controller.set('breadcrumbService', this.get('breadcrumbService'));
   },
-  actions : {
-    goToHomePage(){
+  actions: {
+    goToHomePage() {
       this.refresh();
     },
-    setup(){
-      Ember.set(this.modelFor('data-manager'),'showInitialLaunch', false);
+    setup() {
+      Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
       this.transitionTo('data-manager.replication-setup');
     },
-    didTransition(){
-      if(this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/'){
+    didTransition() {
+      if (this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/') {
         Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
       }
       this.get('breadcrumbService').showBreadcrumbs(this);
