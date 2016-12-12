@@ -53,7 +53,7 @@ export default Ember.Service.extend({
   createPolicy(policy) {
     var url = `${this.get('baseUrl')}/policy/submit/${policy.name}`;
     var data =
-      Object.keys(clusterInfo)
+      Object.keys(policy)
         .reduce((accumulatedString, cKey) => `${accumulatedString}${cKey}=${policy[cKey]}\n`, '');
 
     return Ember.$.ajax({
