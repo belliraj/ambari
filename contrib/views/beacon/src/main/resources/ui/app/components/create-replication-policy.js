@@ -21,7 +21,7 @@ export default Ember.Component.extend({
   beaconViewService : Ember.inject.service('beacon-view-service'),
   initialize : function(){
     this.set('selectionType', 'all');
-    this.set('policy', {});
+    this.set('policy', Ember.Object.create());
     this.set('policy.frequencyInSec', 86400);
     this.set('policy.type', 'HIVE');
     this.set('policy.sourceCluster', this.get('beaconSourceCluster.name'));
@@ -29,6 +29,7 @@ export default Ember.Component.extend({
     this.set('policy.aclOwner', this.get('userInfo').name);
     this.set('policy.aclGroup', this.get('userInfo').groupNames.join());
     this.set('policy.aclPermission', '0x755');
+    this.set('customMinutes', 5);
   }.on('init'),
   getHiveDbs(){
     this.set('requestInProcess', true);
@@ -48,21 +49,31 @@ export default Ember.Component.extend({
       this.set('hiveDatabases', Constants.MOCK_INFO.hiveDatabases);
     });
   },
+  preparePolicy(){
+    if(this.get('policy.type') === 'HIVE' && this.get('selectionType') === 'all'){
+      this.set('policy.dataset', this.get('hiveDatabases').mapBy('name').join());
+      this.set('policy.sourceDatabase', this.get('policy.dataset'));
+    }else if(this.get('policy.type') === 'HIVE' && this.get('selectionType') === 'selected'){
+      var selectedDBs = [];
+      this.$('input[name="db-name"]:checked').each((i, checkbox) => {
+        selectedDBs.push(checkbox.value);
+      });
+      this.set('policy.dataset', selectedDBs.join());
+      this.set('policy.sourceDatabase', this.get('policy.dataset'));
+      this.set('policy.stagingPath', '/tmp');
+    }else{
+      this.set('policy.sourceDir', this.get('policy.dataset'));
+      this.set('policy.targetDir', this.get('policy.dataset'));
+      //TODO Default values to be set in the backend
+      // this.set('policy.sourceSnapshotRetentionAgeLimit', 'minutes(2)');
+      // this.set('policy.sourceSnapshotRetentionNumber', '2');
+      // this.set('policy.targetSnapshotRetentionAgeLimit', 'minutes(2)');
+      // this.set('policy.targetSnapshotRetentionNumber', '2');
+    }
+  },
   actions : {
     createPolicy(){
-      if(this.get('policy.type') === 'HIVE' && this.get('selectionType') === 'all'){
-        this.set('policy.dataset', this.get('hiveDatabases').mapBy('name').join());
-      }else if(this.get('policy.type') === 'HIVE' && this.get('selectionType') === 'selected'){
-        var selectedDBs = [];
-        this.$('input[name="db-name"]:checked').each((i, checkbox) => {
-          selectedDBs.push(checkbox.value);
-        });
-        this.set('policy.dataset', selectedDBs.join());
-        this.set('policy.sourceDatabase', this.get('policy.dataset'));
-      }else{
-        this.set('policy.sourceDir', this.get('policy.dataset'));
-        this.set('policy.targetDir', this.get('policy.dataset'));
-      }
+      this.preparePolicy();
       this.sendAction("savePolicy", this.get('policy'));
     },
     changeSchedule(type){
@@ -74,18 +85,21 @@ export default Ember.Component.extend({
         this.set('policy.frequencyInSec', 604800);
       }else if(type === 'monthly'){
         this.set('policy.frequencyInSec', 2628000);
+      }else if(type === 'custom'){
+        this.set('policy.frequencyInSec', this.get('customMinutes') * 60);
       }
     },
     previous(){
       this.$('#create-policy').find('.active').prev('li').find('a[data-toggle="tab"]').tab('show');
     },
     next(){
+      this.preparePolicy();
       this.$('#create-policy').find('.active').next('li').find('a[data-toggle="tab"]').tab('show');
     },
     onDBSelect(type){
       this.set('selectionType', type);
     },
-    browse(modelProp){
+    browse(){
       this.set('showingFileBrowser', true);
     },
     closeFileBrowser(){
@@ -101,20 +115,23 @@ export default Ember.Component.extend({
     },
     policyTypeChanged(type){
       this.set('policy.type', type);
-      if(type === 'HDFS'){
+      if(type === 'FS'){
         this.set('policy.distcpMaxMaps',1);
-        this.set('policy.distcpMapBandwidth',10)
+        this.set('policy.distcpMapBandwidth',10);
         this.set('policy.tdeEncryptionEnabled',false);
         this.set('policy.preservePermission', true);
       }else{
-        delete this.get('policy.distcpMaxMaps');
-        delete this.get('policy.distcpMapBandwidth');
-        delete this.get('policy.tdeEncryptionEnabled');
-        delete this.get('policy.preservePermission');
+        delete this.get('policy').distcpMaxMaps;
+        delete this.get('policy').distcpMapBandwidth;
+        delete this.get('policy').tdeEncryptionEnabled;
+        delete this.get('policy').preservePermission;
       }
     },
     getHiveDbs(){
       this.getHiveDbs();
+    },
+    cancel(){
+      this.sendAction('cancelCreatePolicy');
     }
   }
 });

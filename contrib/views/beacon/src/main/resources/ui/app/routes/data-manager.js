@@ -33,7 +33,7 @@ export default Ember.Route.extend({
   model() {
     return Ember.RSVP.hash({
       registeredClusters: this.store.query('cluster', { 'fields': 'peers' }),//clusterRegisteredPromise,
-      policies: this.store.query('policy', { 'fields': 'tags,clusters,frequency,starttime,endtime' }),
+      policies: this.store.query('policy', { 'fields': 'tags,clusters,frequency,starttime,endtime,status' }),
       currentCluster: this.store.queryRecord('ambari-cluster', {})
     });
   },
@@ -50,8 +50,9 @@ export default Ember.Route.extend({
       this.transitionTo('data-manager.replication-setup');
     },
     didTransition() {
-      if (this.get('router.url') !== '/data-manager' && this.get('router.url') !== '/') {
+      if (this.get('router.url') !== '/') {
         Ember.set(this.modelFor('data-manager'), 'showInitialLaunch', false);
+        this.transitionTo('data-manager.replication-setup');
       }
       this.get('breadcrumbService').showBreadcrumbs(this);
     }

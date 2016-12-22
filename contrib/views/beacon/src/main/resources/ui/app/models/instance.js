@@ -14,24 +14,22 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
+import DS from 'ember-data';
 import Ember from 'ember';
 
-export default Ember.Route.extend({
-  beaconService : Ember.inject.service('beacon-service'),
-  breadcrumbService : Ember.inject.service('breadcrumb-service'),
-
-  model(){
-    return Ember.RSVP.hash({
-       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime,status'}),
-       beaconSourceCluster : this.store.peekRecord('cluster', this.modelFor('data-manager').currentCluster.get('name'))
-    });
-  },
-  setupController: function(controller, model) {
-    this._super(controller, model);
-  },
-  actions : {
-    didTransition(){
-      this.get('breadcrumbService').showBreadcrumbs(this);
-    }
-  }
+export default DS.Model.extend({
+  name : DS.attr('string'),
+  policyName : DS.attr('string'),
+  type : DS.attr('string'),
+  startTime : DS.attr('string'),
+  endTime : DS.attr('string'),
+  duration : DS.attr('string'),
+  status : DS.attr('string'),
+  message : DS.attr('string'),
+  durationString : Ember.computed('duration', function(){
+    return `${(parseInt(this.get('duration'))/60000).toFixed(4)} Minute(s)`;
+  }),
+  startTimeString : Ember.computed('startTime', function(){
+    return new Date(parseInt(this.get('startTime')));
+  })
 });

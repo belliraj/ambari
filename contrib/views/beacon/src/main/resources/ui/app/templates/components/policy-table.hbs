@@ -23,7 +23,7 @@
       <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp; BACK TO POLICIES
     </button>
   </div>
-    {{#instance-table instances=instances policy=selectedPolicy}}{{/instance-table}}
+    {{#instance-table instances=instances policy=selectedPolicy refreshInstances="viewInstances"}}{{/instance-table}}
   {{else}}
   <div class="clearfix">
     {{#if (eq type 'source')}}
@@ -39,9 +39,7 @@
       <tr>
         <th>STATUS</th>
         <th>POLICY NAME</th>
-        <th>LAST GOOD</th>
         <th>SCHEDULE</th>
-        <th>RUN TIME</th>
         <th>SERVICE</th>
         <th>DESTINATION</th>
         <th>INSTANCES</th>
@@ -53,9 +51,7 @@
       <tr>
         <td class="{{policy.status}}">{{policy.status}}</td>
         <td>{{policy.name}}</td>
-        <td>{{policy.lastRun}}</td>
-        <td>{{policy.frequency}}</td>
-        <td>{{policy.runTime}}</td>
+        <td>{{policy.frequencyString}}</td>
         <td>{{policy.type}}</td>
         <td>{{policy.targetCluster}}</td>
         <td>

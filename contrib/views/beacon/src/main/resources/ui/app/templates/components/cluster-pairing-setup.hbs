@@ -67,7 +67,7 @@
         <div class="col-xs-2">
           <span class="smaller-font">DATA CENTER</span>
         </div>
-        {{#if (not (contains registeredClusters cluster))}}
+        {{#if (not (contains beaconSourceCluster.peersArray cluster))}}
           <div class="col-xs-2">
             <span class="smaller-font">USER NAME</span>
           </div>
@@ -83,7 +83,7 @@
         <div class="col-xs-2">
           <span class="smaller-font">{{cluster.name}}</span>
         </div>
-        {{#if (contains registeredClusters cluster)}}
+        {{#if (contains beaconSourceCluster.peersArray cluster)}}
           <div class="col-xs-2">
             <label class="smaller-font">{{cluster.dataCenter}}</label>
           </div>

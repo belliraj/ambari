@@ -27,7 +27,12 @@ export default DS.RESTSerializer.extend({
   },
   normalizeResponse (store, primaryModelClass, payload, id, requestType) {
     if(primaryModelClass.modelName === 'cluster'){
-
+      if(requestType === 'queryRecord'){
+        var normalizedpayload = {
+          cluster : Ember.copy(payload)
+        };
+        payload = normalizedpayload;
+      }
     }else if(primaryModelClass.modelName === 'ambari-cluster' && requestType === 'queryRecord'){
       payload.ambariCluster = {};
       payload.ambariCluster.name = payload.name;
@@ -39,6 +44,12 @@ export default DS.RESTSerializer.extend({
         ambariCluster : Ember.copy(payload)
       };
       payload = normalizedpayload;
+    }else if(primaryModelClass.modelName === 'instance' && requestType === 'query'){
+      payload.instance.forEach((instance)=>{
+        instance.policyName = instance.name;
+        instance.name = Math.round(Math.random()*1000000000);
+        delete instance.id;
+      });
     }
     return this._super(store, primaryModelClass, payload, id, requestType);
   }

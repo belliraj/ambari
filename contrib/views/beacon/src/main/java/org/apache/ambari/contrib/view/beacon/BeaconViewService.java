@@ -17,7 +17,11 @@
  */
 package org.apache.ambari.contrib.view.beacon;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +38,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.ambari.view.ViewContext;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,10 +94,27 @@ public class BeaconViewService {
 		String hiveDBGetUrl = getHiveServiceUri()
 				+ "/templeton/v1/ddl/database?user.name="
 				+ viewContext.getUsername();
-		String hiveDbs = readFromHiveService(headers, hiveDBGetUrl, "GET",
-				null, null);
-		return Response.ok(getGenericEntityFromJson(hiveDbs)).build();
+		String hiveDbs;
+		try {
+			hiveDbs = read(hiveDBGetUrl);
+			return Response.ok(getGenericEntityFromJson(hiveDbs)).build();
+		} catch (IOException e) {
+			LOGGER.error("Error occured while fetching hive DBs", e);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(e.toString()).build();
+		}
 	}
+	
+	private static String read(String url) throws IOException {
+		//TODO Get InputStream from ViewContext
+	    URL website = new URL(url);
+	    URLConnection connection = website.openConnection();
+	    BufferedReader in = new BufferedReader(
+	      new InputStreamReader(
+	        connection.getInputStream()));
+	    return IOUtils.toString(in);
+	  }
+
 
 	@GET
 	@Path("listRemoteClusters")

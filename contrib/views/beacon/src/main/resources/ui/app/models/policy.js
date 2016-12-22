@@ -14,6 +14,7 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
+import Ember from 'ember';
 import DS from 'ember-data';
 
 export default DS.Model.extend({
@@ -29,4 +30,18 @@ export default DS.Model.extend({
   targetCluster : Ember.computed('targetclusters.[]', function(){
     return this.get('targetclusters').join();
   }),
+  status : DS.attr('string'),
+  frequencyString : Ember.computed('frequency', function(){
+    if(parseInt(this.get('frequency')) === 3600){
+      return "Every Hour";
+    }else if(parseInt(this.get('frequency')) === 86400){
+      return "Every Day";
+    }else if(parseInt(this.get('frequency')) === 604800){
+      return "Every Week";
+    }else if(parseInt(this.get('frequency')) === 2628000){
+      return "Every Month";
+    }else{
+      return `Every ${parseInt(this.get('frequency'))/60} Minute(s)`;
+    }
+  })
 });

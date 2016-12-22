@@ -31,6 +31,8 @@ export default DS.RESTAdapter.extend({
         return Ember.ENV.API_URL + '/beaconService/api/beacon/cluster/list';
       case 'policy':
         return Ember.ENV.API_URL + '/beaconService/api/beacon/policy/list';
+      case 'instance':
+        return `${Ember.ENV.API_URL}/remoteBeaconService/api/beacon/policy/instance/list/${query.policyName}?beaconEndpoint=${query.beaconEndpoint}`;
       case 'ambari-cluster':
         if(query.remote){
           return Ember.ENV.API_URL + '/listRemoteClusters';

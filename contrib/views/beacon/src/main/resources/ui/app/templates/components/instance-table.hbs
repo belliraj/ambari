@@ -17,13 +17,15 @@
 }}
   <div class="mt10">
     <span>Policy Name : {{policy.name}}</span>
+    <span {{action 'refreshInstances'}} title="Refresh Instance list"><i class="fa fa-refresh" aria-hidden="true"></i></span>
     <table id="instances-list" class="table listing table-striped table-hover instances-list" cellspacing="0" width="100%">
       <thead>
         <tr>
           <th>STATUS</th>
           <th>POLICY NAME</th>
           <th>SERVICE</th>
-          <th>RUN TIME</th>
+          <th>START TIME</th>
+          <th>DURATION</th>
           <th>DESTINATION</th>
         </tr>
       </thead>
@@ -31,9 +33,10 @@
         {{#each instances as |instance|}}
           <tr>
             <td class="{{instance.status}}">{{instance.status}}</td>
-            <td>{{instance.name}}</td>
+            <td>{{instance.policyName}}</td>
             <td>{{instance.type}}</td>
-            <td>{{instance.duration}}</td>
+            <td title="MM/DD/YYYY HH:mm:SS">{{moment-format instance.startTimeString 'MM/DD/YYYY HH:mm:SS'}}</td>
+            <td>{{instance.durationString}}</td>
             <td>{{policy.targetCluster}}</td>
           </tr>
         {{else}}

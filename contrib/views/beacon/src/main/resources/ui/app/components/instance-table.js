@@ -17,5 +17,10 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  actions :{
+    refreshInstances (){
+      this.sendAction('refreshInstances', this.get('policy'));
+    }
+  }
 
 });

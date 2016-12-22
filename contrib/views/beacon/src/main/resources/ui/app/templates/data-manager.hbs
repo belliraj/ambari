@@ -4,11 +4,10 @@
       {{#if model.showInitialLaunch}}
         {{#init-launch setup="setup"}}{{/init-launch}}
       {{else}}
-        <div class="col-xs-2 padding0">
+        <div class="col-xs-2 padding0 left-bar">
           {{#left-nav-bar currentCluster=model.currentCluster registeredClusters=model.registeredClusters}}{{/left-nav-bar}}
         </div>
         <div class="col-xs-10 padding0">
-            {{#if (gt model.registeredClusters.meta.totalResults 1)}}
             <div class="container-fluid" role="navigation">
               <div class="navbar-header">
                 <ol class="breadcrumb">
@@ -22,14 +21,14 @@
                 </ol>
               </div>
               <ul class="nav navbar-nav navbar-right navbar-custom">
-                <li>
+                <!--li>
                   {{#link-to "data-manager.monitor" class="smaller-font"}}
                     <a href="" class="smaller-font"><i class="fa fa-tasks pr5 navbar-icons"></i>MONITOR JOBS</a>
                   {{/link-to}}
-                </li>
+                </li-->
                 <li>
                   {{#link-to "data-manager.replication-policies" class="smaller-font"}}
-                    <a href="" class="smaller-font"><i class="fa fa-files-o pr5 navbar-icons"></i>REPLICAITON POLICIES</a>
+                    <a href="" class="smaller-font"><i class="fa fa-files-o pr5 navbar-icons"></i>REPLICATION POLICIES</a>
                   {{/link-to}}
                 </li>
                 <li>
@@ -39,8 +38,7 @@
                 </li>
               </ul>
             </div>
-            {{/if}}
-          {{outlet}}
+            <div class="container-body">{{outlet}}</div>
         </div>
       {{/if}}
     </div>

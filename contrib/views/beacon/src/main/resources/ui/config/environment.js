@@ -26,9 +26,7 @@ module.exports = function (environment) {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
         // e.g. 'with-controller': true
-      },
-      API_URL: "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy",
-      FILE_API_URL: "/api/v1/views/Beacon/versions/1.0.0/instances/Beacon/resources/proxy/fileServices"
+      }
     },
 
     APP: {

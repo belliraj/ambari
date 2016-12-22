@@ -50,8 +50,10 @@ export default Ember.Component.extend({
     clusterInfo.name = cluster.get('name');
     clusterInfo.dataCenter = cluster.get('dataCenter');
     clusterInfo.fsEndpoint = cluster.get('configurations')['core-site']['fs.defaultFS'];
+    let hiveHost = cluster.get('configurations')['core-site']['hadoop.proxyuser.hive.hosts'];
     if (cluster.get('configurations')['hive-site']) {
-      clusterInfo.hsEndpoint = cluster.get('configurations')['hive-site']['hive.metastore.uris'];
+      let hive2Port = cluster.get('configurations')['hive-site']['hive.server2.thrift.port'];
+      clusterInfo.hsEndpoint = `hive2://${hiveHost}:${hive2Port}`;
     }
     //TODO - fix later. description is mandatory in backend.
     clusterInfo.description = 'dummy';
@@ -206,7 +208,7 @@ export default Ember.Component.extend({
       var targetCluster = this.get('remoteClusters').objectAt(index);
       this.registerSourceCluster().then((src) => {
         this.getTargetClusterInfo(targetCluster).then((clusterInfo) => {
-          clusterInfo = Ember.Object.create(clusterInfo)
+          clusterInfo = Ember.Object.create(clusterInfo);
           this.registerTargetCluster(clusterInfo).then(() => {
             this.registerTargetClusterInSource(clusterInfo).then(() => {
               this.registerSourceClusterInTarget(clusterInfo).then(() => {

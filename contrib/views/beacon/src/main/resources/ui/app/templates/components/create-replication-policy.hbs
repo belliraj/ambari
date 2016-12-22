@@ -39,7 +39,7 @@
 									<input type="radio" value="HIVE" checked={{if (eq policy.type 'HIVE') 'checked'}} onchange={{action "policyTypeChanged" value="target.value"}} name="replicationType">HIVE
 								</label>
 								<label class="radio-inline">
-									<input type="radio" value="HDFS" checked={{if (eq policy.type 'HDFS') 'checked'}} onchange={{action "policyTypeChanged" value="target.value"}} name="replicationType">HDFS
+									<input type="radio" value="FS" checked={{if (eq policy.type 'FS') 'checked'}} onchange={{action "policyTypeChanged" value="target.value"}} name="replicationType">HDFS
 								</label>
 							</div>
 						</div>
@@ -80,16 +80,15 @@
 										{{/each}}
 									</div>
 									{{/if}}
-							</div>
-							<div class="col-xs-6">
-								{{#if requestInProcess}}
-									{{spin-spinner lines=7 length=5 radius=5 width=3 left=0}} Fetching hive dbs..
-								{{/if}}
-								{{#if hiveError}}
-									<span class="text-danger">
-										Could not fetch Hive DBs. <a href {{action "getHiveDbs" preventDefault=true}}>Try Again</a>
-									</span>
-								{{/if}}
+									{{#if requestInProcess}}
+										{{spin-spinner lines=7 length=5 radius=5 width=3 left=200}}
+										<div class="hive-db-spinner-message">Fetching hive dbs..</div>
+									{{/if}}
+									{{#if hiveError}}
+										<span class="text-danger">
+											Could not fetch Hive DBs. <a href {{action "getHiveDbs" preventDefault=true}}>Try Again</a>
+										</span>
+									{{/if}}
 							</div>
 						</div>
 					{{else}}
@@ -105,11 +104,13 @@
 							</div>
 						</div>
 					{{/if}}
-					<div class="row">
-						<div class="col-xs-12">
-							<i class="fa fa-exclamation-triangle pr5"></i>Selected data volume is more than maximum allowed 100TB. Please select the databases you want to move.
+					{{#if (gt volume  100)}}
+						<div class="row">
+							<div class="col-xs-12">
+								<i class="fa fa-exclamation-triangle pr5"></i>Selected data volume is more than maximum allowed 100TB. Please select the databases you want to move.
+							</div>
 						</div>
-					</div>
+					{{/if}}
 				</div>
 			</div>
 			RUN JOB
@@ -137,6 +138,7 @@
 								<li {{action 'changeSchedule' 'daily'}} class="active"><a data-target="#dailyRun" data-toggle="tab">Daily</a></li>
 								<li {{action 'changeSchedule' 'weekly'}}><a data-target="#weeklyRun" data-toggle="tab">Weekly</a></li>
 								<li {{action 'changeSchedule' 'monthly'}}><a data-target="#monthlyRun" data-toggle="tab">Monthly</a></li>
+								<li {{action 'changeSchedule' 'custom'}}><a data-target="#minuteRun" data-toggle="tab">Custom</a></li>
 							</ul>
 							<div class="tab-content">
 								<div role="tabpanel" class="tab-pane" id="hourlyRun">
@@ -150,6 +152,9 @@
 								</div>
 								<div role="tabpanel" class="tab-pane" id="monthlyRun">
 									Run Every Month
+								</div>
+								<div role="tabpanel" class="tab-pane" id="minuteRun">
+									Run Every {{input type=text value=customMinutes key-up=(action 'changeSchedule' 'custom')}} Minute
 								</div>
 							</div>
 						</div>
@@ -191,25 +196,31 @@
 				</div>
 			</div>
 			<div class="clearfix">
-				<button class="btn btn-default pull-right" role="button" {{action 'next'}}>GO TO REVIEW</button>
+				<button class="btn btn-default pull-right ml5 btn-action" role="button" {{action 'next'}}>GO TO REVIEW</button>
+				<button class="btn btn-default pull-right" role="button" {{action 'cancel'}}>CANCEL</button>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane review-tab" id="reviewTab">
 			<div class="panel panel-default">
 				<div class="panel-body">
-					Data replication process for data selected from cluster {{policy.sourceCluster}} will be started.<br /><br />
+					Data replication process for data selected from cluster <b>{{policy.sourceCluster}}</b> will be started.<br /><br />
 
-					Transfer Details:<br />
+					<!-- Transfer Details:<br />
 					Total Data Volume:<br />
-					Transfer Time:<br />
-					Files: {{policy.dataset}}<br/>
+					Transfer Time:<br /> -->
+					{{#if (eq policy.type 'HIVE')}}
+						Databases: {{policy.dataset}}<br/>
+					{{else}}
+						Files: {{policy.dataset}}<br/>
+					{{/if}}
 					Destination: {{policy.targetCluster}} <br/>
 
 					<i class="fa fa-exclamation-circle pr5"></i>The first run of the replication policy may take additional time.
 				</div>
 			</div>
 			<div class="clearfix">
-				<button class="btn btn-success pull-right" role="button" {{action 'createPolicy'}}>SUBMIT</button>
+				<button class="btn btn-success pull-right ml5" role="button" {{action 'createPolicy'}}>SUBMIT</button>
+				<button class="btn btn-default pull-right" role="button" {{action 'cancel'}}>CANCEL</button>
 			</div>
 		</div>
 	</div>

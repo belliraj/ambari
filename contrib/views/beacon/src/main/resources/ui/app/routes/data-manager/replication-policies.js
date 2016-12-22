@@ -29,12 +29,13 @@ export default Ember.Route.extend({
     numResults : {refreshModel : true}
   },
   afterModel(model){
+    this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
     var registeredClusters = this.modelFor('data-manager').registeredClusters;
     model.beaconSourceCluster =  this.store.peekRecord('cluster', this.modelFor('data-manager').currentCluster.get('name'));
   },
   model(params){
     return Ember.RSVP.hash({
-       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime'}),
+       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime,status'}),
        userInfo : this.get('beaconViewService').getUserInfo()
     });
   },
@@ -48,22 +49,32 @@ export default Ember.Route.extend({
     createPolicy(){
       this.controllerFor('data-manager.replication-policies').set('createPolicyShown', true);
     },
+    hideCreatePolicy(){
+      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
+    },
     savePolicy(policy){
       this.controllerFor('data-manager.replication-policies').set('creationInProgress', true);
       this.get('remoteBeaconService').createPolicy(policy).then(()=>{
-        this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
-        this.refresh();
+        this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime,status'}).then((policies)=>{
+          this.controllerFor('data-manager.replication-policies').set('model.policies', policies);
+          this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
+          this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
+        });
       }).catch((e)=>{
-        console.error(e);
         this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
-        console.error("Policy creation failed");
+        console.error("Policy creation failed", e);
+        this.controllerFor('data-manager.replication-policies').set('error', {message: 'Failed to create policy'});
       });
-      this.controllerFor('data-manager.replication-policies').set('createPolicyShown', false);
     },
     schedule(policy) {
+        this.controllerFor('data-manager.replication-policies').set('creationInProgress', true);
       this.get('remoteBeaconService').schedulePolicy(policy).then(()=>{
-        this.refresh();
+        this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime,status'}).then((policies)=>{
+          this.controllerFor('data-manager.replication-policies').set('model.policies', policies);
+          this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
+        });
       }).catch((e)=>{
+        this.controllerFor('data-manager.replication-policies').set('creationInProgress', false);
         console.error("Policy suspend - failed", e);
       });
     },

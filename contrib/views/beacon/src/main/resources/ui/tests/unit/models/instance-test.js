@@ -14,24 +14,15 @@
 *    See the License for the specific language governing permissions and
 *    limitations under the License.
 */
-import Ember from 'ember';
+import { moduleForModel, test } from 'ember-qunit';
 
-export default Ember.Route.extend({
-  beaconService : Ember.inject.service('beacon-service'),
-  breadcrumbService : Ember.inject.service('breadcrumb-service'),
+moduleForModel('instance', 'Unit | Model | instance', {
+  // Specify the other units that are required for this test.
+  needs: []
+});
 
-  model(){
-    return Ember.RSVP.hash({
-       policies : this.store.query('policy', {'fields':'tags,clusters,frequency,starttime,endtime,status'}),
-       beaconSourceCluster : this.store.peekRecord('cluster', this.modelFor('data-manager').currentCluster.get('name'))
-    });
-  },
-  setupController: function(controller, model) {
-    this._super(controller, model);
-  },
-  actions : {
-    didTransition(){
-      this.get('breadcrumbService').showBreadcrumbs(this);
-    }
-  }
+test('it exists', function(assert) {
+  let model = this.subject();
+  // let store = this.store();
+  assert.ok(!!model);
 });

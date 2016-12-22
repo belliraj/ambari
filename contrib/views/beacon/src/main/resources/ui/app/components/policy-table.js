@@ -52,7 +52,7 @@ export default Ember.Component.extend({
     if(this.get('type') === 'source'){
       this.set('policyList', this.get('sourcePolicies'));
     }else{
-      this.set('policyList', this.get('incomingPolicies'))
+      this.set('policyList', this.get('incomingPolicies'));
     }
   }.on('init'),
   actions : {
@@ -83,15 +83,17 @@ export default Ember.Component.extend({
     viewInstances(policy){
       this.set('requestInProcess', true);
       this.set('selectedPolicy', policy);
-      this.get('remoteBeaconService')
-        .getAllInstances(policy)
-        .then((response)=>{
-          this.set('requestInProcess', false);
-          this.set('showingInstances', true);
-          this.set('instances', response.instance);
-        }).catch(()=>{
-          this.set('requestInProcess', false);
-        });
+      this.store.queryRecord('cluster', {name :  policy.get('targetCluster')}).then(function(clusterInfo){
+        this.store.query('instance', {'policyName': policy.get('name'), 'beaconEndpoint': clusterInfo.get('beaconEndpoint')})
+          .then((response)=>{
+            this.set('requestInProcess', false);
+            this.set('showingInstances', true);
+            this.set('instances', response);
+          }.bind(this)).catch((e)=>{
+            this.set('requestInProcess', false);
+            throw new Error(e);
+          }.bind(this));
+      }.bind(this));
     },
     backToPolicies(){
       this.set('showingInstances', false);
